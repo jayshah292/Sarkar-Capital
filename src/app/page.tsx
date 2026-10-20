@@ -1,0 +1,119 @@
+import ConsultationForm from "@/components/ConsultationForm";
+import { TrendingUp, ShieldCheck, LineChart, Landmark, Layers, Award } from "lucide-react";
+
+export default function Home() {
+  return (
+    <div className="space-y-16 py-12">
+      {/* Hero Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="lg:col-span-7 space-y-6">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
+              <ShieldCheck className="h-4 w-4" /> AMFI Registered • Corporate ARN Desk
+            </div>
+            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-navy-900 leading-[1.1]">
+              Disciplined Wealth Distribution for India&apos;s Investors
+            </h1>
+            <p className="text-lg text-slate-600 max-w-2xl leading-relaxed">
+              We bridge the gap between retail investors and premier financial institutions. Access mutual funds, equities, sovereign gold bonds, and family risk covers under one transparent roof.
+            </p>
+            <div className="grid grid-cols-3 gap-6 pt-4 border-t border-slate-200">
+              <div>
+                <div className="text-2xl font-bold text-navy-900">₹0</div>
+                <div className="text-xs text-slate-500">Direct Client Account Custody</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-navy-900">40+</div>
+                <div className="text-xs text-slate-500">Empaneled AMCs</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-navy-900">100%</div>
+                <div className="text-xs text-slate-500">Paperless Execution</div>
+              </div>
+            </div>
+          </div>
+          <div className="lg:col-span-5">
+            <ConsultationForm />
+          </div>
+        </div>
+      </section>
+
+      {/* Core Verticals */}
+      <section className="bg-white py-16 border-y border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-3xl font-bold text-navy-900">Integrated Wealth Verticals</h2>
+            <p className="mt-2 text-slate-600 text-sm">Strategic distribution backed by leading regulatory custodians.</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="p-8 rounded-2xl border border-slate-200 bg-slate-50/50 hover:shadow-lg transition">
+              <div className="p-3 bg-emerald-100 text-emerald-700 w-fit rounded-xl mb-4">
+                <TrendingUp className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold text-navy-900 mb-2">Mutual Funds & SIPs</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Equity, hybrid, index, and liquid fund solutions designed around measurable milestones like retirement and education.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl border border-slate-200 bg-slate-50/50 hover:shadow-lg transition">
+              <div className="p-3 bg-blue-100 text-blue-700 w-fit rounded-xl mb-4">
+                <LineChart className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold text-navy-900 mb-2">Equities & Derivatives</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Direct demat setup powered by institutional partnerships with HDFC Securities and IIFL.
+              </p>
+            </div>
+
+            <div className="p-8 rounded-2xl border border-slate-200 bg-slate-50/50 hover:shadow-lg transition">
+              <div className="p-3 bg-purple-100 text-purple-700 w-fit rounded-xl mb-4">
+                <Landmark className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold text-navy-900 mb-2">Fixed Income & Protection</h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Sovereign Gold Bonds, Corporate Fixed Deposits, pure term life covers, and comprehensive family health plans.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Institutional Safeguards */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="rounded-2xl bg-navy-900 text-white p-8 md:p-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+            <div className="flex gap-4 items-start">
+              <div className="p-2 bg-slate-800 rounded-lg text-emerald-400 shrink-0">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <div>
+                <h4 className="font-bold text-base mb-1">Direct Capital Routing</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">We never hold client money. All funds move directly from your bank account to AMCs or clearing corporations.</p>
+              </div>
+            </div>
+            <div className="flex gap-4 items-start">
+              <div className="p-2 bg-slate-800 rounded-lg text-emerald-400 shrink-0">
+                <Layers className="h-6 w-6" />
+              </div>
+              <div>
+                <h4 className="font-bold text-base mb-1">Institutional Platforms</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">Built through licensed partnerships with HDFC Securities, IIFL, and major AMCs in India.</p>
+              </div>
+            </div>
+            <div className="flex gap-4 items-start">
+              <div className="p-2 bg-slate-800 rounded-lg text-emerald-400 shrink-0">
+                <Award className="h-6 w-6" />
+              </div>
+              <div>
+                <h4 className="font-bold text-base mb-1">Certified Governance</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">Led by NISM-Series-V-A certified professionals compliant with AMFI and IRDAI codes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
