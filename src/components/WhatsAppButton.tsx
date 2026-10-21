@@ -4,7 +4,7 @@ import { MessageCircle } from "lucide-react";
 
 export default function WhatsAppButton() {
   // Replace with your official Sarkar Capital desk WhatsApp number (with 91 country code)
-  const phoneNumber = "919876543210";
+  const phoneNumber = "919825898760";
   const defaultMessage = encodeURIComponent(
     "Hi Sarkar Capital, I would like to schedule an institutional portfolio consultation."
   );
