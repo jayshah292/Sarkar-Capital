@@ -4,22 +4,18 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ShieldAlert,
-  ShieldCheck,
-  HeartPulse,
   ArrowRight,
   CheckCircle2,
   Lock,
   HelpCircle,
-  Activity,
-  FileCheck2,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export default function InsurancePage() {
   const [content, setContent] = useState<Record<string, string>>({
-    ins_hero_title: "Insurance & Risk Hedging Desk",
+    ins_hero_title: "Unbundled Term Life & Comprehensive Health Protection",
     ins_hero_subtitle:
-      "Capital preservation begins with unbundled risk transfer. Pure term life covers and comprehensive family health floaters facilitated through certified PoSP frameworks under NIC 66220.",
+      "Pure risk transfer without high-cost endowment mixing. Protect Human Life Value (HLV) and family medical reserves through certified PoSP frameworks under NIC 66220.",
   });
 
   useEffect(() => {
@@ -35,6 +31,29 @@ export default function InsurancePage() {
     }
     loadContent();
   }, []);
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Why does Sarkar Capital advocate unbundled pure term insurance?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Pure term insurance provides high-sum life coverage at a fraction of the cost without mixing low-yield investments, allowing investors to maximize compounding via separate mutual fund SIPs."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How are insurance premiums paid?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In compliance with IRDAI regulations, Sarkar Capital never collects insurance premiums in its corporate name; all payments route directly to the respective underwriting insurance company."
+        }
+      }
+    ]
+  };
 
   const solutions = [
     {
@@ -61,36 +80,18 @@ export default function InsurancePage() {
       ],
       desc: "Protects family wealth from medical inflation. We facilitate pure health indemnities with extensive cashless hospital networks across India.",
     },
-    {
-      title: "Super Top-Up Health Covers",
-      focus: "Catastrophic Medical Reserve",
-      idealSum: "₹25 Lakh to ₹90 Lakh with defined deductible",
-      features: [
-        "Cost-effective enhancement of corporate employer policies",
-        "High aggregate medical coverage for a fraction of base premium",
-        "Seamless claim triggering once deductible threshold is passed",
-      ],
-      desc: "A smart, budget-conscious way to expand total health cover into high seven figures without paying exorbitant base premiums.",
-    },
-    {
-      title: "Personal Accident & Disability Covers",
-      focus: "Living Risk & Temporary Disablement",
-      idealSum: "10x Annual Income",
-      features: [
-        "Weekly income payout during temporary total disability",
-        "Lump-sum compensation for permanent partial/total disablement",
-        "Coverage worldwide 24 hours a day",
-      ],
-      desc: "Addresses the living risk that traditional term insurance excludes: loss of active earning potential due to an unforeseen physical accident.",
-    },
   ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-16">
-      {/* Header */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       <div className="max-w-3xl space-y-4">
-        <div className="inline-flex items-center gap-2 rounded-full border border-rose-300 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-800">
-          <ShieldAlert className="h-3.5 w-3.5" /> Licensed Facilitation Desk • NIC 66220
+        <div className="inline-flex items-center gap-2 rounded-full border border-rose-300 bg-rose-50 px-3.5 py-1 text-xs font-semibold text-rose-800">
+          <ShieldAlert className="h-4 w-4" /> Licensed Facilitation Desk • NIC 66220
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-navy-900 tracking-tight">
           {content.ins_hero_title}
@@ -100,10 +101,9 @@ export default function InsurancePage() {
         </p>
       </div>
 
-      {/* Solutions Grid */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {solutions.map((item, idx) => (
-          <div key={idx} className="bg-white rounded-2xl p-8 border border-slate-200 shadow-xs space-y-4">
+          <div key={idx} className="bg-white rounded-3xl p-8 border border-slate-200 shadow-xs space-y-4">
             <div className="flex justify-between items-start gap-3">
               <h3 className="text-xl font-bold text-navy-900">{item.title}</h3>
               <span className="text-[10px] font-bold uppercase tracking-wider bg-rose-50 text-rose-700 px-2.5 py-1 rounded-md shrink-0">
@@ -128,8 +128,8 @@ export default function InsurancePage() {
         ))}
       </section>
 
-      {/* Philosophy Callout: Unbundled Protection vs ULIPs / Traditional Endowments */}
-      <section className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 space-y-6">
+      {/* Philosophy Callout */}
+      <section className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 space-y-6 shadow-xs">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-rose-700">Distribution Philosophy</span>
           <h2 className="text-2xl font-bold text-navy-900 mt-1">Why We Advocate Unbundled Protection</h2>
@@ -148,7 +148,7 @@ export default function InsurancePage() {
 
           <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
             <h4 className="text-sm font-bold text-navy-900 flex items-center gap-2">
-              <HelpCircle className="w-4 h-4 text-slate-500" /> Traditional Endowment & ULIP Plans
+              <HelpCircle className="w-4 h-4 text-slate-500" /> Traditional Endowment &amp; ULIP Plans
             </h4>
             <p className="leading-relaxed text-slate-600">
               Traditional insurance plans combine modest insurance covers with sub-inflation 4–5% returns and multi-year surrender penalties. Sarkar Capital prioritizes transparent, pure-risk insurance products over bundled high-cost endowment contracts.
@@ -157,8 +157,8 @@ export default function InsurancePage() {
         </div>
       </section>
 
-      {/* Statutory IRDAI Solicitation Notice */}
-      <section className="bg-slate-50 border border-slate-300 rounded-2xl p-6 space-y-2 text-xs leading-relaxed text-slate-600">
+      {/* Statutory IRDAI Notice */}
+      <section className="bg-slate-50 border border-slate-300 rounded-3xl p-6 space-y-2 text-xs leading-relaxed text-slate-600">
         <h4 className="font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wider text-[11px]">
           <Lock className="w-4 h-4 text-slate-700" /> Mandatory Regulatory Notice (IRDAI Framework)
         </h4>
