@@ -1,13 +1,31 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { LineChart, ShieldCheck, ArrowRight, Layers, Building, Lock, CheckCircle2 } from "lucide-react";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Equity Broking & Demat Desk | Sarkar Capital",
-  description: "Institutional demat and trading account onboarding via HDFC Securities and IIFL. Secondary market equities, ETFs, and sovereign gold bonds under NIC 66120.",
-};
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { LineChart, ShieldCheck, ArrowRight, Building, Lock, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 export default function EquitiesPage() {
+  const [content, setContent] = useState<Record<string, string>>({
+    eq_hero_title: "Direct Secondary Market Access",
+    eq_hero_subtitle:
+      "Integrated equity and derivative execution powered by corporate distribution alignments with HDFC Securities and IIFL. Registered under NIC 66120 with zero non-discretionary pooling.",
+  });
+
+  useEffect(() => {
+    async function loadEqContent() {
+      const { data } = await supabase.from("site_content").select("*");
+      if (data && data.length > 0) {
+        const mapped: Record<string, string> = {};
+        data.forEach((row: { key: string; value: string }) => {
+          mapped[row.key] = row.value;
+        });
+        setContent((prev) => ({ ...prev, ...mapped }));
+      }
+    }
+    loadEqContent();
+  }, []);
+
   const steps = [
     {
       step: "01",
@@ -28,20 +46,18 @@ export default function EquitiesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-16">
-      {/* Header */}
       <div className="max-w-3xl space-y-4">
         <div className="inline-flex items-center gap-2 rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800">
           <LineChart className="h-3.5 w-3.5" /> Institutional Equity & Demat Desk
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-navy-900 tracking-tight">
-          Direct Secondary Market Access
+          {content.eq_hero_title}
         </h1>
         <p className="text-base text-slate-600 leading-relaxed">
-          Integrated equity and derivative execution powered by corporate distribution alignments with HDFC Securities and IIFL. Registered under NIC 66120 with zero non-discretionary pooling.
+          {content.eq_hero_subtitle}
         </p>
       </div>
 
-      {/* Institutional Architecture */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4">
           <div className="p-3 bg-blue-100 text-blue-700 w-fit rounded-xl">
@@ -84,7 +100,6 @@ export default function EquitiesPage() {
         </div>
       </section>
 
-      {/* Onboarding Steps */}
       <section className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 space-y-8">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-blue-700">Account Architecture</span>
@@ -103,7 +118,6 @@ export default function EquitiesPage() {
         </div>
       </section>
 
-      {/* Regulatory SEBI Risk Disclosure Notice */}
       <section className="bg-slate-50 border border-slate-300 rounded-2xl p-6 space-y-2 text-xs leading-relaxed text-slate-600">
         <h4 className="font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wider text-[11px]">
           <Lock className="w-4 h-4 text-slate-700" /> Mandatory SEBI Regulatory Notice (Secondary Markets)
@@ -113,7 +127,6 @@ export default function EquitiesPage() {
         </p>
       </section>
 
-      {/* Desk Initiation Action Banner */}
       <section className="bg-navy-900 text-white rounded-3xl p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-1 text-center md:text-left">
           <h3 className="text-xl sm:text-2xl font-bold">Open Institutional Demat & Trading Desk</h3>
