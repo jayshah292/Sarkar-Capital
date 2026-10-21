@@ -2,18 +2,18 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LineChart, ShieldCheck, ArrowRight, Building, Lock, CheckCircle2 } from "lucide-react";
+import { LineChart, ShieldCheck, ArrowRight, Building, Lock, CheckCircle2, HelpCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export default function EquitiesPage() {
   const [content, setContent] = useState<Record<string, string>>({
-    eq_hero_title: "Direct Secondary Market Access",
+    eq_hero_title: "Institutional Equity & Derivative Onboarding Desk",
     eq_hero_subtitle:
-      "Integrated equity and derivative execution powered by corporate distribution alignments with HDFC Securities and IIFL. Registered under NIC 66120 with zero non-discretionary pooling.",
+      "Direct secondary market access across NSE and BSE powered by corporate Authorised Person (AP) alignments with HDFC Securities and IIFL Securities under NIC 66120.",
   });
 
   useEffect(() => {
-    async function loadEqContent() {
+    async function loadContent() {
       const { data } = await supabase.from("site_content").select("*");
       if (data && data.length > 0) {
         const mapped: Record<string, string> = {};
@@ -23,8 +23,31 @@ export default function EquitiesPage() {
         setContent((prev) => ({ ...prev, ...mapped }));
       }
     }
-    loadEqContent();
+    loadContent();
   }, []);
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is the role of Sarkar Capital in equity broking?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sarkar Capital functions as an institutional Authorised Person (AP) and sub-brokering desk aligned with HDFC Securities and IIFL Securities, facilitating secure demat account opening and order execution under NIC 66120."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How are trading margins and funds safeguarded?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In compliance with SEBI circulars, all trading margins and client funds are transferred directly from your bank account to Indian Clearing Corporation Limited (ICCL) or NSE Clearing with zero intermediary holding."
+        }
+      }
+    ]
+  };
 
   const steps = [
     {
@@ -46,9 +69,14 @@ export default function EquitiesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       <div className="max-w-3xl space-y-4">
-        <div className="inline-flex items-center gap-2 rounded-full border border-blue-300 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-800">
-          <LineChart className="h-3.5 w-3.5" /> Institutional Equity & Demat Desk
+        <div className="inline-flex items-center gap-2 rounded-full border border-blue-300 bg-blue-50 px-3.5 py-1 text-xs font-semibold text-blue-800">
+          <LineChart className="h-4 w-4" /> Institutional Equity &amp; Demat Desk • NIC 66120
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-navy-900 tracking-tight">
           {content.eq_hero_title}
@@ -59,13 +87,13 @@ export default function EquitiesPage() {
       </div>
 
       <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4">
-          <div className="p-3 bg-blue-100 text-blue-700 w-fit rounded-xl">
+        <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-xs space-y-4">
+          <div className="p-3 bg-blue-100 text-blue-700 w-fit rounded-2xl">
             <Building className="w-6 h-6" />
           </div>
           <h3 className="text-xl font-bold text-navy-900">Partner Brokerage Platforms</h3>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Sarkar Capital functions as an Authorised Person (AP) / institutional sub-broker. Client demat and trading accounts are housed directly with national clearing custodians.
+            Sarkar Capital functions as an Authorised Person (AP) and institutional sub-broker. Client demat and trading accounts are housed directly with national clearing custodians.
           </p>
           <ul className="space-y-2 text-xs text-slate-700 pt-3 border-t border-slate-100">
             <li className="flex items-center gap-2">
@@ -79,8 +107,8 @@ export default function EquitiesPage() {
           </ul>
         </div>
 
-        <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4">
-          <div className="p-3 bg-emerald-100 text-emerald-700 w-fit rounded-xl">
+        <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-xs space-y-4">
+          <div className="p-3 bg-emerald-100 text-emerald-700 w-fit rounded-2xl">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <h3 className="text-xl font-bold text-navy-900">Zero-Custody Capital Safeguard</h3>
@@ -100,7 +128,7 @@ export default function EquitiesPage() {
         </div>
       </section>
 
-      <section className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 space-y-8">
+      <section className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 space-y-8 shadow-xs">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-blue-700">Account Architecture</span>
           <h2 className="text-2xl font-bold text-navy-900 mt-1">Paperless Onboarding Workflow</h2>
@@ -118,7 +146,7 @@ export default function EquitiesPage() {
         </div>
       </section>
 
-      <section className="bg-slate-50 border border-slate-300 rounded-2xl p-6 space-y-2 text-xs leading-relaxed text-slate-600">
+      <section className="bg-slate-50 border border-slate-300 rounded-3xl p-6 space-y-2 text-xs leading-relaxed text-slate-600">
         <h4 className="font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wider text-[11px]">
           <Lock className="w-4 h-4 text-slate-700" /> Mandatory SEBI Regulatory Notice (Secondary Markets)
         </h4>
@@ -127,9 +155,9 @@ export default function EquitiesPage() {
         </p>
       </section>
 
-      <section className="bg-navy-900 text-white rounded-3xl p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
+      <section className="bg-navy-900 text-white rounded-3xl p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg">
         <div className="space-y-1 text-center md:text-left">
-          <h3 className="text-xl sm:text-2xl font-bold">Open Institutional Demat & Trading Desk</h3>
+          <h3 className="text-xl sm:text-2xl font-bold">Open Institutional Demat &amp; Trading Desk</h3>
           <p className="text-xs text-slate-400 max-w-xl">
             Connect with our onboarding team to set up HDFC Securities or IIFL broking accounts with privileged institutional brokerage tiers.
           </p>
