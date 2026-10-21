@@ -11,16 +11,16 @@ export const metadata: Metadata = {
     template: "%s | Sarkar Capital",
   },
   description:
-    "Institutional financial distribution across Mutual Funds, Equities (HDFC & IIFL), Sovereign Gold Bonds, and Insurance under NIC 66120 & 66220. Zero client custody.",
+    "Institutional financial distribution across Mutual Funds, Equities (HDFC Securities & IIFL), Fixed Income (SGBs/Corporate FDs), and Insurance under NIC 66120 & 66220. 100% non-custodial capital routing.",
   keywords: [
     "Sarkar Capital",
-    "Mutual Fund Distributor West Bengal",
-    "AMFI Registered Intermediary",
+    "Mutual Fund Distributor Kolkata",
+    "AMFI Registered Mutual Fund Intermediary",
     "SIP Calculator India",
-    "HDFC Securities Sub Broker",
+    "HDFC Securities Sub Broker Desk",
     "IIFL Demat Account Partner",
-    "Term Insurance Distribution",
     "Sovereign Gold Bonds Desk",
+    "Pure Term Insurance Distribution",
   ],
   authors: [{ name: "Sarkar Capital Private Limited" }],
   creator: "Sarkar Capital",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     siteName: "Sarkar Capital",
     title: "Sarkar Capital | Disciplined Wealth Distribution",
     description:
-      "AMFI-registered mutual fund distribution and equity desks via HDFC Securities and IIFL. 100% paperless onboarding and direct capital routing.",
+      "AMFI-registered mutual fund distribution and equity desks via HDFC Securities and IIFL. Paperless onboarding and direct capital routing.",
   },
   twitter: {
     card: "summary_large_image",
@@ -71,12 +71,16 @@ export default function RootLayout({
           "Regulated financial intermediary facilitating mutual funds, secondary market equities, fixed income instruments, and risk covers under NIC 66120 and 66220. Operates on a non-custodial architecture.",
         "address": {
           "@type": "PostalAddress",
+          "streetAddress": "Khardaha",
+          "addressLocality": "North 24 Parganas, Kolkata",
           "addressRegion": "West Bengal",
+          "postalCode": "700117",
           "addressCountry": "IN"
         },
         "geo": {
           "@type": "GeoCoordinates",
-          "addressCountry": "IN"
+          "latitude": "22.72",
+          "longitude": "88.38"
         },
         "areaServed": {
           "@type": "Country",
@@ -86,13 +90,13 @@ export default function RootLayout({
         "paymentAccepted": "Direct Bank Transfer, Net Banking, UPI to Regulated Clearing Corporations",
         "hasOfferCatalog": {
           "@type": "OfferCatalog",
-          "name": "Financial Distribution Services",
+          "name": "Institutional Distribution Desks",
           "itemListElement": [
             {
               "@type": "Offer",
               "itemOffered": {
                 "@type": "Service",
-                "name": "Mutual Funds & SIP Distribution",
+                "name": "Mutual Funds & SIP Planning Desk",
                 "description": "AMFI-registered distribution across 40+ AMCs with zero client capital custody."
               }
             },
@@ -100,16 +104,24 @@ export default function RootLayout({
               "@type": "Offer",
               "itemOffered": {
                 "@type": "Service",
-                "name": "Equity Demat & Trading Desk",
-                "description": "Sub-broker and Authorised Person services through HDFC Securities and IIFL."
+                "name": "Equity Broking & Demat Desk",
+                "description": "Authorised Person desk and sub-broker alignments through HDFC Securities and IIFL."
               }
             },
             {
               "@type": "Offer",
               "itemOffered": {
                 "@type": "Service",
-                "name": "Fixed Income & Capital Protection",
-                "description": "Distribution of Sovereign Gold Bonds, Corporate Fixed Deposits, and IRDAI-governed policies."
+                "name": "Fixed Income & Capital Safety Desk",
+                "description": "Distribution of Sovereign Gold Bonds (SGBs), AAA Corporate Fixed Deposits, and 54EC Capital Gains Bonds."
+              }
+            },
+            {
+              "@type": "Offer",
+              "itemOffered": {
+                "@type": "Service",
+                "name": "Insurance & Risk Protection Desk",
+                "description": "Unbundled pure term life and comprehensive family health floaters under NIC 66220."
               }
             }
           ]
