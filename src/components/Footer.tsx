@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShieldCheck, MapPin, Mail, Phone, Lock } from "lucide-react";
+import { ShieldCheck, MapPin, Lock, ExternalLink } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -17,11 +17,11 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-xs leading-relaxed text-slate-400 max-w-sm">
-              Sarkar Capital Private Limited is an institutional financial distribution company facilitating mutual funds, secondary market equities, fixed income securities, and risk protection under NIC codes 66120 &amp; 66220.
+              Sarkar Capital Private Limited is an AMFI-registered mutual fund distributor and institutional financial intermediary operating under NIC codes 66120 &amp; 66220. Built on a 100% non-custodial clearing architecture.
             </p>
             <div className="pt-2 text-[11px] text-slate-400 space-y-1">
-              <p>CIN: <span className="text-slate-200">U66120WB2026PTCXXXXXX (In Process)</span></p>
-              <p>AMFI Corporate Desk: <span className="text-slate-200">ARN-Registered Intermediary</span></p>
+              <p>CIN: <span className="text-slate-200">U66120WB2026PTCXXXXXX (Incorporation In Process)</span></p>
+              <p>AMFI Registration: <span className="text-slate-200">Corporate ARN Desk (NISM-Series-V-A Certified)</span></p>
               <p className="flex items-center gap-1.5 pt-1 text-slate-300">
                 <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 Khardaha, North 24 Parganas, Kolkata, West Bengal – 700117
@@ -29,10 +29,15 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Regulated Product Desks */}
+          {/* 1. Regulated Products */}
           <div className="space-y-3">
-            <h4 className="text-white font-bold text-xs uppercase tracking-wider">Product Desks</h4>
+            <h4 className="text-white font-bold text-xs uppercase tracking-wider">Products</h4>
             <ul className="space-y-2 text-xs">
+              <li>
+                <Link href="/services" className="hover:text-emerald-400 transition font-medium text-slate-300">
+                  All Offerings &amp; Asset Matrix
+                </Link>
+              </li>
               <li>
                 <Link href="/services/mutual-funds" className="hover:text-emerald-400 transition">
                   Mutual Funds &amp; SIPs
@@ -53,46 +58,60 @@ export default function Footer() {
                   Term &amp; Health Insurance
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          {/* 2. Tools & Ecosystem */}
+          <div className="space-y-3">
+            <h4 className="text-white font-bold text-xs uppercase tracking-wider">Tools &amp; Custody</h4>
+            <ul className="space-y-2 text-xs text-slate-400">
               <li>
-                <Link href="/calculators" className="hover:text-emerald-400 transition">
-                  SIP &amp; Wealth Calculators
+                <Link href="/calculators" className="hover:text-emerald-400 transition text-slate-300 font-medium">
+                  SIP &amp; Step-Up Calculator
                 </Link>
               </li>
+              <li>
+                <Link href="/calculators" className="hover:text-emerald-400 transition">
+                  Lumpsum &amp; Inflation Simulator
+                </Link>
+              </li>
+              <li className="pt-1 text-slate-500">HDFC Securities (AP Desk)</li>
+              <li className="text-slate-500">IIFL Securities (Sub-Broker)</li>
+              <li className="text-slate-500">ICCL / NSE Clearing / NSDL / CDSL</li>
             </ul>
           </div>
 
-          {/* Institutional Backing */}
-          <div className="space-y-3">
-            <h4 className="text-white font-bold text-xs uppercase tracking-wider">Platform Partners</h4>
-            <ul className="space-y-2 text-xs text-slate-400">
-              <li>HDFC Securities (Authorised Person)</li>
-              <li>IIFL Securities (Sub-Broker Desk)</li>
-              <li>40+ Empaneled AMCs across India</li>
-              <li>Direct Depository Routing (NSDL/CDSL)</li>
-            </ul>
-          </div>
-
-          {/* Governance & Redressal */}
+          {/* 3. Governance & Redressal */}
           <div className="space-y-3">
             <h4 className="text-white font-bold text-xs uppercase tracking-wider">Governance</h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <Link href="/about" className="hover:text-emerald-400 transition">
-                  About Corporate Bio
+                  About Corporate &amp; MOA
                 </Link>
               </li>
               <li>
                 <Link href="/compliance" className="hover:text-emerald-400 transition">
-                  Investor Redressal Charter
+                  Investor Charter &amp; Grievance
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="hover:text-emerald-400 transition">
-                  Branch &amp; Desk Directory
+                  Contact &amp; Branch Desk
                 </Link>
               </li>
               <li>
-                <Link href="/admin" className="hover:text-emerald-400 transition inline-flex items-center gap-1 text-slate-400">
+                <a
+                  href="https://scores.sebi.gov.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-emerald-400 transition inline-flex items-center gap-1"
+                >
+                  SEBI SCORES Portal <ExternalLink className="w-3 h-3" />
+                </a>
+              </li>
+              <li>
+                <Link href="/admin" className="hover:text-emerald-400 transition inline-flex items-center gap-1 text-slate-500">
                   <Lock className="w-3 h-3" /> Admin Studio
                 </Link>
               </li>
@@ -100,21 +119,21 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Regulatory Disclaimers & Non-Custodial Notice */}
+        {/* Statutory Disclaimers */}
         <div className="border-t border-slate-800 pt-8 space-y-3 text-[11px] leading-relaxed text-slate-400">
           <p>
-            <strong className="text-slate-200">Non-Custodial Architecture:</strong> Sarkar Capital Private Limited functions strictly as a financial product distributor and licensed intermediary under NIC 66120 and 66220. Sarkar Capital never solicits, accepts, or holds client deposits or funds in corporate accounts. 100% of investor capital routes directly to the respective Asset Management Companies (AMCs), clearing corporations (ICCL/NSE Clearing), or insurance underwriting companies.
+            <strong className="text-slate-200">Mandatory Non-Custodial Notice:</strong> Sarkar Capital Private Limited operates strictly as an AMFI-registered mutual fund distributor and financial intermediary under NIC 66120 and 66220. We do not offer SEBI-registered Investment Advisory (RIA) or discretionary Portfolio Management Services (PMS), nor do we accept client deposits into corporate accounts. 100% of investor funds settle directly with the respective AMCs, stock exchange clearing corporations (ICCL / NSE Clearing), or IRDAI-licensed insurers.
           </p>
           <p>
-            <strong className="text-slate-200">Market Risk Disclosure:</strong> Mutual fund investments and securities trading are subject to market risks. Read all scheme-related documents, offer circulars, and risk disclosure documents carefully before investing. Past performance is not indicative of future returns.
+            <strong className="text-slate-200">Standard Market Risk Warning:</strong> Mutual fund investments and secondary market securities are subject to market risks. Read all scheme information documents (SID), key information memorandums (KIM), and risk disclosure documents carefully before investing. Past performance does not guarantee future results.
           </p>
           <p>
-            <strong className="text-slate-200">Insurance Notice:</strong> Insurance is the subject matter of solicitation. Facilitated under licensed Point of Sales Person (PoSP) and corporate agency alignments.
+            <strong className="text-slate-200">Insurance Solicitation Notice:</strong> Insurance is the subject matter of solicitation. Pure risk policies are facilitated through certified Point of Sales Person (PoSP) and corporate agency frameworks.
           </p>
 
           <div className="flex flex-col sm:flex-row justify-between items-center pt-4 border-t border-slate-800 text-[11px] text-slate-400 gap-2">
             <p>© {new Date().getFullYear()} Sarkar Capital Private Limited. All rights reserved.</p>
-            <p>Designed for disciplined, non-custodial wealth distribution.</p>
+            <p>Institutional-grade distribution • Zero client custody.</p>
           </div>
         </div>
       </div>
