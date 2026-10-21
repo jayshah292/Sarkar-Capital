@@ -8,8 +8,7 @@ import {
   Clock,
   ShieldCheck,
   MapPin,
-  MessageCircle,
-  FileText,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -35,12 +34,52 @@ export default function ContactPage() {
     },
   ];
 
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "FinancialService",
+    "name": "Sarkar Capital Private Limited",
+    "image": "https://sarkarcapital.in/logo.png",
+    "@id": "https://sarkarcapital.in",
+    "url": "https://sarkarcapital.in",
+    "telephone": "+919876543210",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Khardaha",
+      "addressLocality": "North 24 Parganas, Kolkata",
+      "addressRegion": "West Bengal",
+      "postalCode": "700117",
+      "addressCountry": "IN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 22.72,
+      "longitude": 88.38
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "opens": "09:30",
+      "closes": "18:30"
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-16">
-      {/* Header */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
+
       <div className="max-w-3xl space-y-4">
         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3.5 py-1 text-xs font-semibold text-emerald-800">
-          <Building2 className="h-3.5 w-3.5" /> Direct Advisory & Corporate Desk
+          <Building2 className="h-4 w-4" /> Direct Advisory &amp; Corporate Desk
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-navy-900 tracking-tight">
           Connect With Sarkar Capital
@@ -50,13 +89,11 @@ export default function ContactPage() {
         </p>
       </div>
 
-      {/* Main Grid: Form + Office Information */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-        {/* Left: Office Details & Direct Channels */}
         <div className="lg:col-span-6 space-y-8">
           <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-xs space-y-6">
             <h2 className="text-xl font-bold text-navy-900 flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-emerald-600" /> Registered Desk & Presence
+              <MapPin className="w-5 h-5 text-emerald-600" /> Registered Desk &amp; Presence
             </h2>
 
             <div className="space-y-4 text-xs text-slate-600 leading-relaxed">
@@ -79,14 +116,13 @@ export default function ContactPage() {
                   <div className="flex items-center gap-2 font-bold text-navy-900">
                     <ShieldCheck className="w-4 h-4 text-emerald-600" /> Regulatory Scope
                   </div>
-                  <p className="text-[11px] text-slate-500">AMFI Registered Mutual Fund Desk</p>
-                  <p className="text-[11px] text-slate-500">NIC Codes: 66120 & 66220</p>
+                  <p className="text-[11px] text-slate-500">AMFI Registered Distributor</p>
+                  <p className="text-[11px] text-slate-500">NIC Codes: 66120 &amp; 66220</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Department Directory */}
           <div className="space-y-4">
             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500">
               Direct Communication Desks
@@ -95,7 +131,7 @@ export default function ContactPage() {
               {contactPoints.map((pt, idx) => (
                 <div
                   key={idx}
-                  className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs space-y-2 hover:border-emerald-500/50 transition"
+                  className="bg-white rounded-3xl p-5 border border-slate-200 shadow-xs space-y-2 hover:border-emerald-500/50 transition"
                 >
                   <h4 className="text-sm font-bold text-navy-900">{pt.title}</h4>
                   <p className="text-xs text-slate-500">{pt.desc}</p>
@@ -112,10 +148,9 @@ export default function ContactPage() {
             </div>
           </div>
 
-          {/* Quick Regulatory Link */}
-          <div className="p-5 bg-emerald-50/70 border border-emerald-200 rounded-2xl flex items-center justify-between gap-4">
+          <div className="p-5 bg-emerald-50/70 border border-emerald-200 rounded-3xl flex items-center justify-between gap-4">
             <div className="space-y-0.5">
-              <span className="text-xs font-bold text-emerald-900 block">Investor Charter & Grievance Redressal</span>
+              <span className="text-xs font-bold text-emerald-900 block">Investor Charter &amp; Redressal</span>
               <p className="text-[11px] text-emerald-700">Review our formal 3-tier escalation matrix and regulatory portals.</p>
             </div>
             <Link
@@ -127,7 +162,6 @@ export default function ContactPage() {
           </div>
         </div>
 
-        {/* Right: Lead Capture Consultation Form */}
         <div className="lg:col-span-6">
           <div className="sticky top-24">
             <ConsultationForm />
