@@ -1,7 +1,38 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import ConsultationForm from "@/components/ConsultationForm";
-import { TrendingUp, ShieldCheck, LineChart, Landmark, Layers, Award } from "lucide-react";
+import { TrendingUp, ShieldCheck, LineChart, Landmark, Layers, Award, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 export default function Home() {
+  const [content, setContent] = useState<Record<string, string>>({
+    hero_badge: "AMFI Registered • Corporate ARN Desk",
+    hero_title: "Disciplined Wealth Distribution for India's Investors",
+    hero_subtitle: "We bridge the gap between retail investors and premier financial institutions. Access mutual funds, equities, sovereign gold bonds, and family risk covers under one transparent roof.",
+    stat_custody_val: "₹0",
+    stat_custody_label: "Direct Client Account Custody",
+    stat_partners_val: "40+",
+    stat_partners_label: "Empaneled AMCs",
+    stat_execution_val: "100%",
+    stat_execution_label: "Paperless Execution",
+  });
+
+  useEffect(() => {
+    async function loadDynamicContent() {
+      const { data } = await supabase.from("site_content").select("*");
+      if (data && data.length > 0) {
+        const mapped: Record<string, string> = {};
+        data.forEach((row: { key: string; value: string }) => {
+          mapped[row.key] = row.value;
+        });
+        setContent((prev) => ({ ...prev, ...mapped }));
+      }
+    }
+    loadDynamicContent();
+  }, []);
+
   return (
     <div className="space-y-16 py-12">
       {/* Hero Section */}
@@ -9,32 +40,51 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-7 space-y-6">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
-              <ShieldCheck className="h-4 w-4" /> AMFI Registered • Corporate ARN Desk
+              <ShieldCheck className="h-4 w-4" /> {content.hero_badge}
             </div>
             <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-navy-900 leading-[1.1]">
-              Disciplined Wealth Distribution for India&apos;s Investors
+              {content.hero_title}
             </h1>
             <p className="text-lg text-slate-600 max-w-2xl leading-relaxed">
-              We bridge the gap between retail investors and premier financial institutions. Access mutual funds, equities, sovereign gold bonds, and family risk covers under one transparent roof.
+              {content.hero_subtitle}
             </p>
             <div className="grid grid-cols-3 gap-6 pt-4 border-t border-slate-200">
               <div>
-                <div className="text-2xl font-bold text-navy-900">₹0</div>
-                <div className="text-xs text-slate-500">Direct Client Account Custody</div>
+                <div className="text-2xl font-bold text-navy-900">{content.stat_custody_val}</div>
+                <div className="text-xs text-slate-500">{content.stat_custody_label}</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-navy-900">40+</div>
-                <div className="text-xs text-slate-500">Empaneled AMCs</div>
+                <div className="text-2xl font-bold text-navy-900">{content.stat_partners_val}</div>
+                <div className="text-xs text-slate-500">{content.stat_partners_label}</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-navy-900">100%</div>
-                <div className="text-xs text-slate-500">Paperless Execution</div>
+                <div className="text-2xl font-bold text-navy-900">{content.stat_execution_val}</div>
+                <div className="text-xs text-slate-500">{content.stat_execution_label}</div>
               </div>
             </div>
           </div>
           <div className="lg:col-span-5">
             <ConsultationForm />
           </div>
+        </div>
+      </section>
+
+      {/* About Link Section (Eliminating Navigational Orphan) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="space-y-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">Governance & Institutional Backing</span>
+            <h3 className="text-xl font-bold text-navy-900">Registered Intermediary Built on Zero-Custody</h3>
+            <p className="text-sm text-slate-600 max-w-2xl">
+              Licensed under NIC Codes 66120 & 66220 with NISM certified leadership. Learn about our statutory MOA and regulatory safeguards.
+            </p>
+          </div>
+          <Link
+            href="/about"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-navy-900 hover:bg-slate-800 text-white font-medium rounded-lg text-sm transition shrink-0"
+          >
+            Read Corporate Bio <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
@@ -52,9 +102,12 @@ export default function Home() {
                 <TrendingUp className="h-6 w-6" />
               </div>
               <h3 className="text-xl font-bold text-navy-900 mb-2">Mutual Funds & SIPs</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed mb-4">
                 Equity, hybrid, index, and liquid fund solutions designed around measurable milestones like retirement and education.
               </p>
+              <Link href="/services" className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1">
+                Explore funds <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
 
             <div className="p-8 rounded-2xl border border-slate-200 bg-slate-50/50 hover:shadow-lg transition">
@@ -62,9 +115,12 @@ export default function Home() {
                 <LineChart className="h-6 w-6" />
               </div>
               <h3 className="text-xl font-bold text-navy-900 mb-2">Equities & Derivatives</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed mb-4">
                 Direct demat setup powered by institutional partnerships with HDFC Securities and IIFL.
               </p>
+              <Link href="/services" className="text-xs font-semibold text-blue-700 hover:text-blue-800 inline-flex items-center gap-1">
+                Explore broking <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
 
             <div className="p-8 rounded-2xl border border-slate-200 bg-slate-50/50 hover:shadow-lg transition">
@@ -72,9 +128,12 @@ export default function Home() {
                 <Landmark className="h-6 w-6" />
               </div>
               <h3 className="text-xl font-bold text-navy-900 mb-2">Fixed Income & Protection</h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed mb-4">
                 Sovereign Gold Bonds, Corporate Fixed Deposits, pure term life covers, and comprehensive family health plans.
               </p>
+              <Link href="/services" className="text-xs font-semibold text-purple-700 hover:text-purple-800 inline-flex items-center gap-1">
+                Explore protection <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
             </div>
           </div>
         </div>
