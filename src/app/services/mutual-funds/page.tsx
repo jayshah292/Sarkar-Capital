@@ -1,13 +1,31 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { TrendingUp, ShieldCheck, CheckCircle2, ArrowRight, BarChart3, Calculator, HelpCircle } from "lucide-react";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Mutual Funds & SIP Distribution | Sarkar Capital",
-  description: "AMFI-registered mutual fund distribution. Systematic investment planning (SIP), ELSS tax saving, and goal-based portfolio construction across 40+ AMCs.",
-};
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { TrendingUp, ArrowRight, Calculator } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 export default function MutualFundsPage() {
+  const [content, setContent] = useState<Record<string, string>>({
+    mf_hero_title: "Systematic Mutual Fund Distribution",
+    mf_hero_subtitle:
+      "Access over 40+ empaneled Asset Management Companies (AMCs) across India. Disciplined SIP setups, goal-aligned asset allocations, and zero-custody transactions.",
+  });
+
+  useEffect(() => {
+    async function loadMfContent() {
+      const { data } = await supabase.from("site_content").select("*");
+      if (data && data.length > 0) {
+        const mapped: Record<string, string> = {};
+        data.forEach((row: { key: string; value: string }) => {
+          mapped[row.key] = row.value;
+        });
+        setContent((prev) => ({ ...prev, ...mapped }));
+      }
+    }
+    loadMfContent();
+  }, []);
+
   const categories = [
     {
       title: "Equity Funds",
@@ -41,20 +59,18 @@ export default function MutualFundsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-16">
-      {/* Header */}
       <div className="max-w-3xl space-y-4">
         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
           <TrendingUp className="h-3.5 w-3.5" /> AMFI Registered Mutual Fund Desk
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-navy-900 tracking-tight">
-          Systematic Mutual Fund Distribution
+          {content.mf_hero_title}
         </h1>
         <p className="text-base text-slate-600 leading-relaxed">
-          Access over 40+ empaneled Asset Management Companies (AMCs) across India. Disciplined SIP setups, goal-aligned asset allocations, and zero-custody transactions.
+          {content.mf_hero_subtitle}
         </p>
       </div>
 
-      {/* Product Categories */}
       <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {categories.map((cat, i) => (
           <div key={i} className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-4">
@@ -76,7 +92,6 @@ export default function MutualFundsPage() {
         ))}
       </section>
 
-      {/* AEO Comparison Table: Direct vs Regular Distribution */}
       <section className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 space-y-6">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Transparency & Framework</span>
@@ -119,7 +134,6 @@ export default function MutualFundsPage() {
         </div>
       </section>
 
-      {/* Interactive Tool Cross-Link */}
       <section className="bg-slate-900 text-white rounded-3xl p-8 sm:p-10 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2 text-center md:text-left">
           <div className="inline-flex items-center gap-1.5 text-xs text-emerald-400 font-semibold uppercase tracking-wider">
