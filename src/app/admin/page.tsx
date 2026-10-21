@@ -22,10 +22,9 @@ export default function AdminPortal() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
-  const [activeTab, setActiveTab] = useState<"content" | "inquiries">("content");
+  const [activeTab, setActiveTab] = useState<"homepage" | "about" | "mf" | "equities" | "compliance" | "inquiries">("homepage");
   const [saveStatus, setSaveStatus] = useState("");
   
-  // Content States
   const [content, setContent] = useState<Record<string, string>>({
     hero_badge: "",
     hero_title: "",
@@ -36,10 +35,19 @@ export default function AdminPortal() {
     stat_partners_label: "",
     stat_execution_val: "",
     stat_execution_label: "",
-    about_summary: "",
+    about_hero_title: "",
+    about_hero_subtitle: "",
+    about_moa_quote: "",
+    mf_hero_title: "",
+    mf_hero_subtitle: "",
+    eq_hero_title: "",
+    eq_hero_subtitle: "",
+    compliance_hero_title: "",
+    compliance_hero_subtitle: "",
+    compliance_grievance_email: "",
+    compliance_officer_email: "",
   });
 
-  // Inquiries State
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
 
   useEffect(() => {
@@ -117,7 +125,6 @@ export default function AdminPortal() {
     );
   }
 
-  // Login Screen
   if (!session) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
@@ -167,33 +174,25 @@ export default function AdminPortal() {
     );
   }
 
-  // Authenticated Admin Dashboard
   return (
     <div className="min-h-screen bg-slate-50 py-10">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl border border-slate-200 mb-8 gap-4 shadow-sm">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Admin Content Studio</h1>
-            <p className="text-xs text-slate-500">Edit live text or review investor consultation leads</p>
+            <h1 className="text-2xl font-bold text-slate-900">Site Content Studio</h1>
+            <p className="text-xs text-slate-500">Edit copy across all pages or manage investor consultation leads</p>
           </div>
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setActiveTab("content")}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
-                activeTab === "content" ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }`}
-            >
-              Edit Content
-            </button>
-            <button
-              onClick={() => setActiveTab("inquiries")}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
-                activeTab === "inquiries" ? "bg-emerald-600 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
-              }`}
-            >
-              Leads ({inquiries.filter((i) => i.status === "pending").length})
-            </button>
+            {saveStatus && <span className="text-xs text-emerald-600 font-semibold">{saveStatus}</span>}
+            {activeTab !== "inquiries" && (
+              <button
+                onClick={handleSaveContent}
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 shadow-sm transition"
+              >
+                <Save className="w-4 h-4" /> Save & Publish
+              </button>
+            )}
             <button
               onClick={handleLogout}
               className="p-2 text-slate-500 hover:text-red-600 rounded-lg border border-slate-200 hover:bg-slate-100 transition"
@@ -204,107 +203,233 @@ export default function AdminPortal() {
           </div>
         </div>
 
-        {/* Tab 1: Content Editor */}
-        {activeTab === "content" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-6">
-            <div className="flex justify-between items-center pb-4 border-b border-slate-100">
-              <h2 className="text-lg font-bold text-slate-900">Homepage Text Elements</h2>
-              <div className="flex items-center gap-3">
-                {saveStatus && <span className="text-xs text-emerald-600 font-semibold">{saveStatus}</span>}
-                <button
-                  onClick={handleSaveContent}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 shadow-sm transition"
-                >
-                  <Save className="w-4 h-4" /> Save & Publish
-                </button>
+        {/* Navigation Tabs */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {[
+            { id: "homepage", label: "Homepage" },
+            { id: "about", label: "About Us" },
+            { id: "mf", label: "Mutual Funds" },
+            { id: "equities", label: "Equities / Demat" },
+            { id: "compliance", label: "Compliance & Desk" },
+            { id: "inquiries", label: `Leads (${inquiries.filter((i) => i.status === "pending").length})` },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+                activeTab === tab.id
+                  ? "bg-navy-900 text-white shadow"
+                  : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-100"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 1. Homepage Editor */}
+        {activeTab === "homepage" && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-4">
+            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Homepage Content</h2>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Top Badge Pill</label>
+              <input
+                type="text"
+                value={content.hero_badge || ""}
+                onChange={(e) => setContent({ ...content, hero_badge: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Hero Main Heading</label>
+              <input
+                type="text"
+                value={content.hero_title || ""}
+                onChange={(e) => setContent({ ...content, hero_title: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Hero Subtitle Paragraph</label>
+              <textarea
+                rows={3}
+                value={content.hero_subtitle || ""}
+                onChange={(e) => setContent({ ...content, hero_subtitle: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Stat 1 Value & Label</label>
+                <input
+                  type="text"
+                  value={content.stat_custody_val || ""}
+                  onChange={(e) => setContent({ ...content, stat_custody_val: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm mb-2"
+                />
+                <input
+                  type="text"
+                  value={content.stat_custody_label || ""}
+                  onChange={(e) => setContent({ ...content, stat_custody_label: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Stat 2 Value & Label</label>
+                <input
+                  type="text"
+                  value={content.stat_partners_val || ""}
+                  onChange={(e) => setContent({ ...content, stat_partners_val: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm mb-2"
+                />
+                <input
+                  type="text"
+                  value={content.stat_partners_label || ""}
+                  onChange={(e) => setContent({ ...content, stat_partners_label: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Stat 3 Value & Label</label>
+                <input
+                  type="text"
+                  value={content.stat_execution_val || ""}
+                  onChange={(e) => setContent({ ...content, stat_execution_val: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm mb-2"
+                />
+                <input
+                  type="text"
+                  value={content.stat_execution_label || ""}
+                  onChange={(e) => setContent({ ...content, stat_execution_label: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs"
+                />
               </div>
             </div>
+          </div>
+        )}
 
-            <div className="space-y-4">
+        {/* 2. About Us Editor */}
+        {activeTab === "about" && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-4">
+            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">About Us Page</h2>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Page Title</label>
+              <input
+                type="text"
+                value={content.about_hero_title || ""}
+                onChange={(e) => setContent({ ...content, about_hero_title: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Executive Summary Description</label>
+              <textarea
+                rows={3}
+                value={content.about_hero_subtitle || ""}
+                onChange={(e) => setContent({ ...content, about_hero_subtitle: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">MOA Clause III(A) Quote</label>
+              <textarea
+                rows={4}
+                value={content.about_moa_quote || ""}
+                onChange={(e) => setContent({ ...content, about_moa_quote: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 3. Mutual Funds Editor */}
+        {activeTab === "mf" && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-4">
+            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Mutual Funds Page</h2>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Heading</label>
+              <input
+                type="text"
+                value={content.mf_hero_title || ""}
+                onChange={(e) => setContent({ ...content, mf_hero_title: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Sub-heading Description</label>
+              <textarea
+                rows={3}
+                value={content.mf_hero_subtitle || ""}
+                onChange={(e) => setContent({ ...content, mf_hero_subtitle: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 4. Equities / Broking Desk Editor */}
+        {activeTab === "equities" && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-4">
+            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Equities & Demat Desk</h2>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Heading</label>
+              <input
+                type="text"
+                value={content.eq_hero_title || ""}
+                onChange={(e) => setContent({ ...content, eq_hero_title: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Sub-heading Description</label>
+              <textarea
+                rows={3}
+                value={content.eq_hero_subtitle || ""}
+                onChange={(e) => setContent({ ...content, eq_hero_subtitle: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 5. Compliance Editor */}
+        {activeTab === "compliance" && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-4">
+            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Compliance & Grievance Desk</h2>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Heading</label>
+              <input
+                type="text"
+                value={content.compliance_hero_title || ""}
+                onChange={(e) => setContent({ ...content, compliance_hero_title: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Sub-heading Description</label>
+              <textarea
+                rows={3}
+                value={content.compliance_hero_subtitle || ""}
+                onChange={(e) => setContent({ ...content, compliance_hero_subtitle: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Top Badge Pill</label>
+                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Level 1 Grievance Email</label>
                 <input
-                  type="text"
-                  value={content.hero_badge || ""}
-                  onChange={(e) => setContent({ ...content, hero_badge: e.target.value })}
+                  type="email"
+                  value={content.compliance_grievance_email || ""}
+                  onChange={(e) => setContent({ ...content, compliance_grievance_email: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
                 />
               </div>
-
               <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Hero Main Heading</label>
+                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Level 2 Officer Email</label>
                 <input
-                  type="text"
-                  value={content.hero_title || ""}
-                  onChange={(e) => setContent({ ...content, hero_title: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Hero Subtitle Paragraph</label>
-                <textarea
-                  rows={3}
-                  value={content.hero_subtitle || ""}
-                  onChange={(e) => setContent({ ...content, hero_subtitle: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Stat 1 Value</label>
-                  <input
-                    type="text"
-                    value={content.stat_custody_val || ""}
-                    onChange={(e) => setContent({ ...content, stat_custody_val: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm mb-2"
-                  />
-                  <input
-                    type="text"
-                    value={content.stat_custody_label || ""}
-                    onChange={(e) => setContent({ ...content, stat_custody_label: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs text-slate-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Stat 2 Value</label>
-                  <input
-                    type="text"
-                    value={content.stat_partners_val || ""}
-                    onChange={(e) => setContent({ ...content, stat_partners_val: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm mb-2"
-                  />
-                  <input
-                    type="text"
-                    value={content.stat_partners_label || ""}
-                    onChange={(e) => setContent({ ...content, stat_partners_label: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs text-slate-600"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Stat 3 Value</label>
-                  <input
-                    type="text"
-                    value={content.stat_execution_val || ""}
-                    onChange={(e) => setContent({ ...content, stat_execution_val: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm mb-2"
-                  />
-                  <input
-                    type="text"
-                    value={content.stat_execution_label || ""}
-                    onChange={(e) => setContent({ ...content, stat_execution_label: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs text-slate-600"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-slate-100">
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">About Us Executive Summary</label>
-                <textarea
-                  rows={3}
-                  value={content.about_summary || ""}
-                  onChange={(e) => setContent({ ...content, about_summary: e.target.value })}
+                  type="email"
+                  value={content.compliance_officer_email || ""}
+                  onChange={(e) => setContent({ ...content, compliance_officer_email: e.target.value })}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
                 />
               </div>
@@ -312,7 +437,7 @@ export default function AdminPortal() {
           </div>
         )}
 
-        {/* Tab 2: Consultation Leads */}
+        {/* 6. Leads Inbox */}
         {activeTab === "inquiries" && (
           <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
             <div className="flex justify-between items-center mb-6">
