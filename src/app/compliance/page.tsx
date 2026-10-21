@@ -1,26 +1,45 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { ShieldCheck, FileText, ExternalLink, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Regulatory Compliance & Investor Charter | Sarkar Capital",
-  description: "Statutory disclosures, investor grievance escalation matrix, and regulatory compliance standards for Sarkar Capital under AMFI, SEBI, and IRDAI frameworks.",
-};
+import { useEffect, useState } from "react";
+import { ShieldCheck, FileText, ExternalLink, Clock, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 export default function CompliancePage() {
+  const [content, setContent] = useState<Record<string, string>>({
+    compliance_hero_title: "Regulatory Disclosures & Investor Charter",
+    compliance_hero_subtitle:
+      "Operating transparently under AMFI, SEBI, and IRDAI codes of conduct. Zero-custody asset routing with a clearly defined investor protection framework.",
+    compliance_grievance_email: "grievance@sarkarcapital.in",
+    compliance_officer_email: "compliance@sarkarcapital.in",
+  });
+
+  useEffect(() => {
+    async function loadComplianceContent() {
+      const { data } = await supabase.from("site_content").select("*");
+      if (data && data.length > 0) {
+        const mapped: Record<string, string> = {};
+        data.forEach((row: { key: string; value: string }) => {
+          mapped[row.key] = row.value;
+        });
+        setContent((prev) => ({ ...prev, ...mapped }));
+      }
+    }
+    loadComplianceContent();
+  }, []);
+
   const escalationTiers = [
     {
       level: "Level 1: Internal Grievance Desk",
       target: "Sarkar Capital Investor Redressal Cell",
       tat: "Resolution within 48 to 72 business hours",
-      contact: "grievance@sarkarcapital.in",
+      contact: content.compliance_grievance_email,
       desc: "For any queries regarding transaction delays, service discrepancies, or statement issues. Investors receive a formal acknowledgment ticket within 24 hours.",
     },
     {
       level: "Level 2: Principal / Compliance Officer",
       target: "Designated Head of Compliance",
       tat: "Resolution within 7 working days",
-      contact: "compliance@sarkarcapital.in",
+      contact: content.compliance_officer_email,
       desc: "If the resolution provided at Level 1 does not meet your expectations or is not resolved within 72 hours, the matter escalates directly to the designated compliance director.",
     },
     {
@@ -38,20 +57,18 @@ export default function CompliancePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-14">
-      {/* Header */}
       <div className="max-w-3xl space-y-4">
         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-800">
           <ShieldCheck className="h-3.5 w-3.5" /> Governance & Statutory Standards
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-navy-900 tracking-tight">
-          Regulatory Disclosures & Investor Charter
+          {content.compliance_hero_title}
         </h1>
         <p className="text-base text-slate-600 leading-relaxed">
-          Operating transparently under AMFI, SEBI, and IRDAI codes of conduct. Zero-custody asset routing with a clearly defined investor protection framework.
+          {content.compliance_hero_subtitle}
         </p>
       </div>
 
-      {/* Corporate Registration & Legal Disclosures */}
       <section className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-10 shadow-sm space-y-6">
         <div>
           <h2 className="text-xl font-bold text-navy-900">Corporate & Licensing Metadata</h2>
@@ -75,7 +92,6 @@ export default function CompliancePage() {
         </div>
       </section>
 
-      {/* Investor Grievance Escalation Matrix */}
       <section className="space-y-6">
         <div>
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">Investor Protection Mechanism</span>
@@ -122,7 +138,6 @@ export default function CompliancePage() {
         </div>
       </section>
 
-      {/* Operating Safeguards Summary */}
       <section className="bg-slate-50 border border-slate-200 rounded-3xl p-8 sm:p-10 space-y-4">
         <h3 className="text-lg font-bold text-navy-900 flex items-center gap-2">
           <FileText className="w-5 h-5 text-emerald-600" /> Statutory Code of Conduct (AMFI & SEBI)
