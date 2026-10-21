@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import ConsultationForm from "@/components/ConsultationForm";
-import { TrendingUp, ShieldCheck, LineChart, Landmark, Layers, Award, ArrowRight } from "lucide-react";
+import SipCalculator from "@/components/SipCalculator";
+import { TrendingUp, ShieldCheck, LineChart, Landmark, Layers, Award, ArrowRight, Calculator } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
@@ -69,7 +70,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About Link Section (Eliminating Navigational Orphan) */}
+      {/* Corporate Governance Callout */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-1">
@@ -105,8 +106,8 @@ export default function Home() {
               <p className="text-sm text-slate-600 leading-relaxed mb-4">
                 Equity, hybrid, index, and liquid fund solutions designed around measurable milestones like retirement and education.
               </p>
-              <Link href="/services" className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1">
-                Explore funds <ArrowRight className="w-3.5 h-3.5" />
+              <Link href="/services/mutual-funds" className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 inline-flex items-center gap-1">
+                Explore funds & frameworks <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
@@ -114,12 +115,12 @@ export default function Home() {
               <div className="p-3 bg-blue-100 text-blue-700 w-fit rounded-xl mb-4">
                 <LineChart className="h-6 w-6" />
               </div>
-              <h3 className="text-xl font-bold text-navy-900 mb-2">Equities & Derivatives</h3>
+              <h3 className="text-xl font-bold text-navy-900 mb-2">Equities & Secondary Market</h3>
               <p className="text-sm text-slate-600 leading-relaxed mb-4">
                 Direct demat setup powered by institutional partnerships with HDFC Securities and IIFL.
               </p>
-              <Link href="/services" className="text-xs font-semibold text-blue-700 hover:text-blue-800 inline-flex items-center gap-1">
-                Explore broking <ArrowRight className="w-3.5 h-3.5" />
+              <Link href="/services/equities" className="text-xs font-semibold text-blue-700 hover:text-blue-800 inline-flex items-center gap-1">
+                Explore trading desk <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
@@ -132,15 +133,38 @@ export default function Home() {
                 Sovereign Gold Bonds, Corporate Fixed Deposits, pure term life covers, and comprehensive family health plans.
               </p>
               <Link href="/services" className="text-xs font-semibold text-purple-700 hover:text-purple-800 inline-flex items-center gap-1">
-                Explore protection <ArrowRight className="w-3.5 h-3.5" />
+                Explore protection suite <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Interactive Calculator Teaser Section */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-8">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700 mb-1">
+              <Calculator className="w-4 h-4" /> Live Growth Simulator
+            </div>
+            <h2 className="text-3xl font-bold text-navy-900">Project Your Investment Compounding</h2>
+            <p className="text-sm text-slate-600 mt-1 max-w-xl">
+              Model real-time wealth milestones with optional annual step-up adjustments matching your salary growth.
+            </p>
+          </div>
+          <Link
+            href="/calculators"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-800 border-b border-emerald-600 pb-0.5"
+          >
+            Open Full Calculator Hub <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+
+        <SipCalculator />
+      </section>
+
       {/* Institutional Safeguards */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="rounded-2xl bg-navy-900 text-white p-8 md:p-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
             <div className="flex gap-4 items-start">
