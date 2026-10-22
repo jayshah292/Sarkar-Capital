@@ -19,22 +19,22 @@ export default function PartnerRail() {
       }
     }
     loadLogos();
-  }, [],);
+  }, []);
 
   const partners = [
-    { key: "logo_nuvama", name: "Nuvama", role: "Partnered Institution", defaultLogo: "https://logo.clearbit.com/nuvama.com" },
-    { key: "logo_axis", name: "Axis Securities", role: "Partnered Institution", defaultLogo: "https://logo.clearbit.com/axisdirect.in" },
-    { key: "logo_iifl", name: "IIFL Capital", role: "Partnered Institution", defaultLogo: "https://logo.clearbit.com/iifl.com" },
-    { key: "logo_creso", name: "Creso", role: "Partnered Institution", defaultLogo: "" },
-    { key: "logo_prudent", name: "Prudent", role: "Partnered Institution", defaultLogo: "https://logo.clearbit.com/prudentcorporate.com" },
-    { key: "logo_sbi", name: "SBI AMC", role: "Empaneled AMC", defaultLogo: "https://logo.clearbit.com/sbimf.com" },
-    { key: "logo_hdfc", name: "HDFC AMC", role: "Empaneled AMC", defaultLogo: "https://logo.clearbit.com/hdfcfund.com" },
-    { key: "logo_icici", name: "ICICI AMC", role: "Empaneled AMC", defaultLogo: "https://logo.clearbit.comibruprod.com" },
-    { key: "logo_stallion", name: "Stallion", role: "Partnered Institution", defaultLogo: "" },
-    { key: "logo_carlenion", name: "Carlenion", role: "Partnered Institution", defaultLogo: "" },
-    { key: "logo_parag", name: "Parag Parikh AMC", role: "Empaneled AMC", defaultLogo: "https://logo.clearbit.com/amc.ppfas.com" },
-    { key: "logo_nippon", name: "Nippon India AMC", role: "Empaneled AMC", defaultLogo: "https://logo.clearbit.com/nipponindiaim.com" },
-    { key: "logo_quant", name: "Quant AMC", role: "Empaneled AMC", defaultLogo: "https://logo.clearbit.com/quantmutual.com" },
+    { key: "logo_nuvama", name: "Nuvama", role: "Partnered Institution", logo: "https://logo.clearbit.com/nuvama.com" },
+    { key: "logo_axis", name: "Axis Securities", role: "Partnered Institution", logo: "https://logo.clearbit.com/axisdirect.in" },
+    { key: "logo_iifl", name: "IIFL Capital", role: "Partnered Institution", logo: "https://logo.clearbit.com/iifl.com" },
+    { key: "logo_creso", name: "Creso", role: "Partnered Institution", logo: "" },
+    { key: "logo_prudent", name: "Prudent", role: "Partnered Institution", logo: "https://logo.clearbit.com/prudentcorporate.com" },
+    { key: "logo_sbi", name: "SBI AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/sbimf.com" },
+    { key: "logo_hdfc", name: "HDFC AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/hdfcfund.com" },
+    { key: "logo_icici", name: "ICICI AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/icicipruamc.com" },
+    { key: "logo_stallion", name: "Stallion", role: "Partnered Institution", logo: "" },
+    { key: "logo_carlenion", name: "Carlenion", role: "Partnered Institution", logo: "" },
+    { key: "logo_parag", name: "Parag Parikh AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/amc.ppfas.com" },
+    { key: "logo_nippon", name: "Nippon India AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/nipponindiaim.com" },
+    { key: "logo_quant", name: "Quant AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/quantmutual.com" },
   ];
 
   return (
@@ -52,32 +52,32 @@ export default function PartnerRail() {
           </p>
         </div>
 
-        {/* Partner Logo Grid */}
+        {/* Partner Logo & Badge Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pt-2">
           {partners.map((partner, idx) => {
-            const logoUrl = content[partner.key] || partner.defaultLogo;
+            const activeLogo = content[partner.key] || partner.logo;
             return (
               <div
                 key={idx}
-                className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex flex-col justify-center items-center text-center hover:border-emerald-500/60 transition min-h-[105px]"
+                className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex flex-col justify-center items-center text-center hover:border-emerald-500/60 transition min-h-[110px]"
               >
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
                   {partner.role}
                 </span>
-                {logoUrl ? (
-                  <div className="h-10 w-28 flex items-center justify-center my-0.5">
-                    <img 
-                      src={logoUrl} 
-                      alt={partner.name} 
+                {activeLogo ? (
+                  <div className="h-10 w-28 flex items-center justify-center my-1">
+                    <img
+                      src={activeLogo}
+                      alt={partner.name}
                       className="max-h-9 max-w-28 object-contain"
                       onError={(e) => {
-                        // Fallback to text if image fails to load
+                        // Fallback to text if network logo fails
                         (e.target as HTMLElement).style.display = "none";
                       }}
                     />
                   </div>
                 ) : null}
-                <span className={`text-xs font-black text-navy-900 leading-snug ${logoUrl ? "text-[11px] mt-1 text-slate-700" : "my-1"}`}>
+                <span className={`text-xs font-black text-navy-900 leading-snug ${activeLogo ? "text-[11px] mt-1 text-slate-700" : "my-1"}`}>
                   {partner.name}
                 </span>
               </div>
