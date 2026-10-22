@@ -51,9 +51,9 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* 2. Main Navigation Bar (Zerodha/Dezerv Standard Order) */}
+      {/* 2. Main Navigation Bar */}
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand Logo (Universal Home Link) */}
+        {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="bg-navy-900 p-2 rounded-xl text-white shadow-xs group-hover:bg-slate-800 transition">
             <ShieldCheck className="h-5 w-5 text-emerald-400" />
@@ -68,9 +68,17 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Menu: 1. Products -> 2. Calculators -> 3. About & Governance -> 4. Contact Desk */}
+        {/* Desktop Menu: Home -> About Us -> Products -> Calculators -> Contact Us */}
         <nav className="hidden lg:flex items-center gap-7 text-sm font-semibold text-slate-700">
-          {/* 1. Products Mega-Dropdown */}
+          <Link href="/" className="hover:text-emerald-600 transition py-2">
+            Home
+          </Link>
+
+          <Link href="/about" className="hover:text-emerald-600 transition py-2">
+            About Us
+          </Link>
+
+          {/* Products Mega-Dropdown */}
           <div
             className="relative"
             onMouseEnter={() => setProductsOpen(true)}
@@ -159,7 +167,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* 2. Calculators Dropdown */}
+          {/* Calculators Dropdown */}
           <div
             className="relative"
             onMouseEnter={() => setToolsOpen(true)}
@@ -206,56 +214,9 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* 3. About & Governance Consolidated Dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={() => setGovernanceOpen(true)}
-            onMouseLeave={() => setGovernanceOpen(false)}
-          >
-            <Link
-              href="/about"
-              className="flex items-center gap-1 hover:text-emerald-600 transition py-2"
-            >
-              About &amp; Governance <ChevronDown className="w-4 h-4 text-slate-400" />
-            </Link>
-            {governanceOpen && (
-              <div className="absolute top-full left-0 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 p-3 grid gap-1">
-                <Link
-                  href="/about"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition"
-                >
-                  <div className="p-2 bg-slate-100 text-navy-900 rounded-lg shrink-0">
-                    <Building2 className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-navy-900">Corporate Pedigree &amp; MOA</div>
-                    <div className="text-[11px] text-slate-500 font-normal">
-                      NISM Certification, NIC Mandate &amp; Custody
-                    </div>
-                  </div>
-                </Link>
-
-                <Link
-                  href="/compliance"
-                  className="flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition"
-                >
-                  <div className="p-2 bg-emerald-50 text-emerald-700 rounded-lg shrink-0">
-                    <FileText className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-bold text-navy-900">Regulatory &amp; Investor Charter</div>
-                    <div className="text-[11px] text-slate-500 font-normal">
-                      3-Tier Grievance Matrix, SCORES &amp; SMART ODR
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* 4. Contact Desk */}
+          {/* Contact Us */}
           <Link href="/contact" className="hover:text-emerald-600 transition py-2">
-            Contact Desk
+            Contact Us
           </Link>
         </nav>
 
@@ -283,13 +244,28 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-6 space-y-4 shadow-xl">
           <div className="space-y-1">
+            <Link
+              href="/"
+              onClick={() => setMobileOpen(false)}
+              className="block px-3 py-2 text-xs font-bold text-navy-900 hover:bg-slate-50 rounded-lg"
+            >
+              Home
+            </Link>
+            <Link
+              href="/about"
+              onClick={() => setMobileOpen(false)}
+              className="block px-3 py-2 text-xs font-bold text-navy-900 hover:bg-slate-50 rounded-lg"
+            >
+              About Us
+            </Link>
+
             <div className="pt-2 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              1. Regulated Products
+              Products
             </div>
             <Link
               href="/services"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 text-xs font-bold text-navy-900 hover:bg-slate-50 rounded-lg"
+              className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg"
             >
               <Layers className="w-4 h-4 text-emerald-600" /> All Products &amp; Asset Matrix
             </Link>
@@ -323,7 +299,7 @@ export default function Navbar() {
             </Link>
 
             <div className="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              2. Financial Tools
+              Calculators
             </div>
             <Link
               href="/calculators"
@@ -334,32 +310,14 @@ export default function Navbar() {
             </Link>
 
             <div className="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              3. About &amp; Governance
-            </div>
-            <Link
-              href="/about"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg"
-            >
-              <Building2 className="w-4 h-4 text-slate-500" /> Corporate Bio &amp; MOA
-            </Link>
-            <Link
-              href="/compliance"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg"
-            >
-              <FileText className="w-4 h-4 text-slate-500" /> Investor Charter &amp; Redressal
-            </Link>
-
-            <div className="pt-3 pb-1 px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              4. Connect
+              Connect
             </div>
             <Link
               href="/contact"
               onClick={() => setMobileOpen(false)}
               className="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-lg"
             >
-              <PhoneCall className="w-4 h-4 text-slate-500" /> Contact &amp; Branch Desk
+              <PhoneCall className="w-4 h-4 text-slate-500" /> Contact Us
             </Link>
           </div>
 
