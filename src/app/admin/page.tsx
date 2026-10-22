@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Lock, Save, LogOut, Clock, Mail, Phone, RefreshCw } from "lucide-react";
+import { Lock, Save, LogOut, Clock, Mail, Phone, RefreshCw, Upload, Image as ImageIcon } from "lucide-react";
 
 interface Inquiry {
   id: string;
@@ -15,18 +15,7 @@ interface Inquiry {
   status: string;
 }
 
-type TabType =
-  | "homepage"
-  | "services"
-  | "mf"
-  | "equities"
-  | "fixed_income"
-  | "insurance"
-  | "calculators"
-  | "about"
-  | "compliance"
-  | "contact"
-  | "inquiries";
+type TabType = "homepage" | "about" | "media" | "inquiries";
 
 export default function AdminPortal() {
   const [session, setSession] = useState<any>(null);
@@ -37,41 +26,15 @@ export default function AdminPortal() {
 
   const [activeTab, setActiveTab] = useState<TabType>("homepage");
   const [saveStatus, setSaveStatus] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const [content, setContent] = useState<Record<string, string>>({
-    hero_badge: "",
     hero_title: "",
     hero_subtitle: "",
-    stat_custody_val: "",
-    stat_custody_label: "",
-    stat_partners_val: "",
-    stat_partners_label: "",
-    stat_execution_val: "",
-    stat_execution_label: "",
-    services_hero_title: "",
-    services_hero_subtitle: "",
-    mf_hero_title: "",
-    mf_hero_subtitle: "",
-    eq_hero_title: "",
-    eq_hero_subtitle: "",
-    fi_hero_title: "",
-    fi_hero_subtitle: "",
-    ins_hero_title: "",
-    ins_hero_subtitle: "",
-    calc_hero_title: "",
-    calc_hero_subtitle: "",
     about_hero_title: "",
     about_hero_subtitle: "",
-    about_moa_quote: "",
-    compliance_hero_title: "",
-    compliance_hero_subtitle: "",
-    compliance_grievance_email: "",
-    compliance_officer_email: "",
-    contact_hero_title: "",
-    contact_hero_subtitle: "",
-    contact_address: "",
-    contact_phone_primary: "",
-    contact_email_primary: "",
+    abhijit_photo_url: "",
+    partner_logos: "",
   });
 
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -134,8 +97,37 @@ export default function AdminPortal() {
     for (const [key, value] of Object.entries(content)) {
       await supabase.from("site_content").upsert({ key, value });
     }
-    setSaveStatus("All pages published live!");
+    setSaveStatus("Changes published live!");
     setTimeout(() => setSaveStatus(""), 3000);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, keyName: string) => {
+    try {
+      setUploading(true);
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${keyName}-${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("public-assets")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from("public-assets").getPublicUrl(filePath);
+      
+      setContent((prev) => ({ ...prev, [keyName]: data.publicUrl }));
+      await supabase.from("site_content").upsert({ key: keyName, value: data.publicUrl });
+      setSaveStatus("Image uploaded successfully!");
+      setTimeout(() => setSaveStatus(""), 3000);
+    } catch (error: any) {
+      alert("Error uploading image: " + error.message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const updateInquiryStatus = async (id: string, newStatus: string) => {
@@ -146,7 +138,7 @@ export default function AdminPortal() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-slate-500 text-sm">Loading Admin Content Studio...</div>
+        <div className="text-slate-500 text-sm">Loading Admin Studio...</div>
       </div>
     );
   }
@@ -158,8 +150,8 @@ export default function AdminPortal() {
           <div className="flex items-center justify-center w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl mx-auto mb-4">
             <Lock className="w-6 h-6" />
           </div>
-          <h2 className="text-2xl font-bold text-center text-slate-900 mb-1">Tinny&apos;s Content Desk</h2>
-          <p className="text-center text-xs text-slate-500 mb-6">Sarkar Capital Universal CMS &amp; Leads</p>
+          <h2 className="text-2xl font-bold text-center text-slate-900 mb-1">Tinny&apos;s Admin Studio</h2>
+          <p className="text-center text-xs text-slate-500 mb-6">Sarkar Capital CMS &amp; Media Manager</p>
 
           {loginError && (
             <div className="p-3 bg-red-50 text-red-700 text-xs rounded-lg mb-4">
@@ -175,7 +167,7 @@ export default function AdminPortal() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
               />
             </div>
             <div>
@@ -185,7 +177,7 @@ export default function AdminPortal() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
               />
             </div>
             <button
@@ -202,21 +194,20 @@ export default function AdminPortal() {
 
   return (
     <div className="min-h-screen bg-slate-50 py-10">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Header */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl border border-slate-200 mb-6 gap-4 shadow-xs">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Universal Content Studio (All 9 Pages)</h1>
-            <p className="text-xs text-slate-500">Edit live headings and copy across every route or manage investor consultation leads</p>
+            <h1 className="text-2xl font-bold text-slate-900">Admin Studio &amp; Media Uploader</h1>
+            <p className="text-xs text-slate-500">Manage website copy, upload Abhijit Sarkar&apos;s photo, partner logos, and view leads.</p>
           </div>
           <div className="flex items-center gap-3">
             {saveStatus && <span className="text-xs text-emerald-600 font-semibold">{saveStatus}</span>}
             {activeTab !== "inquiries" && (
               <button
                 onClick={handleSaveContent}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 shadow-xs transition"
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition"
               >
-                <Save className="w-4 h-4" /> Save &amp; Publish All
+                <Save className="w-4 h-4" /> Save Changes
               </button>
             )}
             <button
@@ -229,25 +220,17 @@ export default function AdminPortal() {
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex gap-2 mb-6">
           {[
-            { id: "homepage", label: "1. Homepage" },
-            { id: "services", label: "2. Products Hub" },
-            { id: "mf", label: "3. Mutual Funds" },
-            { id: "equities", label: "4. Equities Desk" },
-            { id: "fixed_income", label: "5. Fixed Income" },
-            { id: "insurance", label: "6. Insurance Desk" },
-            { id: "calculators", label: "7. Calculators" },
-            { id: "about", label: "8. About & MOA" },
-            { id: "compliance", label: "9. Compliance" },
-            { id: "contact", label: "10. Contact Info" },
+            { id: "homepage", label: "Homepage Copy" },
+            { id: "about", label: "About & Founder Photo" },
+            { id: "media", label: "Partner Logos Manager" },
             { id: "inquiries", label: `Leads Inbox (${inquiries.filter((i) => i.status === "pending").length})` },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as TabType)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
                 activeTab === tab.id
                   ? "bg-navy-900 text-white shadow-xs"
                   : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-100"
@@ -258,21 +241,11 @@ export default function AdminPortal() {
           ))}
         </div>
 
-        {/* 1. Homepage */}
         {activeTab === "homepage" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Homepage (`/`)</h2>
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-4 shadow-xs">
+            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Homepage Content</h2>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Regulatory Top Badge</label>
-              <input
-                type="text"
-                value={content.hero_badge || ""}
-                onChange={(e) => setContent({ ...content, hero_badge: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Hero Main Headline (H1)</label>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Headline (H1)</label>
               <input
                 type="text"
                 value={content.hero_title || ""}
@@ -281,7 +254,7 @@ export default function AdminPortal() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Hero Subtitle (GEO &amp; Value Prop)</label>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Subtitle</label>
               <textarea
                 rows={3}
                 value={content.hero_subtitle || ""}
@@ -289,212 +262,47 @@ export default function AdminPortal() {
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
               />
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-100">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Metric 1 Value &amp; Label</label>
-                <input
-                  type="text"
-                  value={content.stat_custody_val || ""}
-                  onChange={(e) => setContent({ ...content, stat_custody_val: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm mb-2"
-                />
-                <input
-                  type="text"
-                  value={content.stat_custody_label || ""}
-                  onChange={(e) => setContent({ ...content, stat_custody_label: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Metric 2 Value &amp; Label</label>
-                <input
-                  type="text"
-                  value={content.stat_partners_val || ""}
-                  onChange={(e) => setContent({ ...content, stat_partners_val: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm mb-2"
-                />
-                <input
-                  type="text"
-                  value={content.stat_partners_label || ""}
-                  onChange={(e) => setContent({ ...content, stat_partners_label: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Metric 3 Value &amp; Label</label>
-                <input
-                  type="text"
-                  value={content.stat_execution_val || ""}
-                  onChange={(e) => setContent({ ...content, stat_execution_val: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm mb-2"
-                />
-                <input
-                  type="text"
-                  value={content.stat_execution_label || ""}
-                  onChange={(e) => setContent({ ...content, stat_execution_label: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs"
-                />
-              </div>
-            </div>
           </div>
         )}
 
-        {/* 2. Products Hub */}
-        {activeTab === "services" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Products Catalogue Hub (`/services`)</h2>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Headline (H1)</label>
-              <input
-                type="text"
-                value={content.services_hero_title || ""}
-                onChange={(e) => setContent({ ...content, services_hero_title: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Lead Paragraph</label>
-              <textarea
-                rows={3}
-                value={content.services_hero_subtitle || ""}
-                onChange={(e) => setContent({ ...content, services_hero_subtitle: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* 3. Mutual Funds */}
-        {activeTab === "mf" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Mutual Funds Desk (`/services/mutual-funds`)</h2>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Headline (H1)</label>
-              <input
-                type="text"
-                value={content.mf_hero_title || ""}
-                onChange={(e) => setContent({ ...content, mf_hero_title: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Lead Paragraph</label>
-              <textarea
-                rows={3}
-                value={content.mf_hero_subtitle || ""}
-                onChange={(e) => setContent({ ...content, mf_hero_subtitle: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* 4. Equities Desk */}
-        {activeTab === "equities" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Equities &amp; Demat Desk (`/services/equities`)</h2>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Headline (H1)</label>
-              <input
-                type="text"
-                value={content.eq_hero_title || ""}
-                onChange={(e) => setContent({ ...content, eq_hero_title: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Lead Paragraph</label>
-              <textarea
-                rows={3}
-                value={content.eq_hero_subtitle || ""}
-                onChange={(e) => setContent({ ...content, eq_hero_subtitle: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* 5. Fixed Income Desk */}
-        {activeTab === "fixed_income" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Fixed Income &amp; Bonds Desk (`/services/fixed-income`)</h2>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Headline (H1)</label>
-              <input
-                type="text"
-                value={content.fi_hero_title || ""}
-                onChange={(e) => setContent({ ...content, fi_hero_title: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Lead Paragraph</label>
-              <textarea
-                rows={3}
-                value={content.fi_hero_subtitle || ""}
-                onChange={(e) => setContent({ ...content, fi_hero_subtitle: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* 6. Insurance Desk */}
-        {activeTab === "insurance" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Insurance &amp; Risk Desk (`/services/insurance`)</h2>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Headline (H1)</label>
-              <input
-                type="text"
-                value={content.ins_hero_title || ""}
-                onChange={(e) => setContent({ ...content, ins_hero_title: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Lead Paragraph</label>
-              <textarea
-                rows={3}
-                value={content.ins_hero_subtitle || ""}
-                onChange={(e) => setContent({ ...content, ins_hero_subtitle: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* 7. Calculators Hub */}
-        {activeTab === "calculators" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Calculators Hub (`/calculators`)</h2>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Headline (H1)</label>
-              <input
-                type="text"
-                value={content.calc_hero_title || ""}
-                onChange={(e) => setContent({ ...content, calc_hero_title: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Lead Paragraph</label>
-              <textarea
-                rows={3}
-                value={content.calc_hero_subtitle || ""}
-                onChange={(e) => setContent({ ...content, calc_hero_subtitle: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-          </div>
-        )}
-
-        {/* 8. About & MOA */}
         {activeTab === "about" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">About &amp; Corporate Pedigree (`/about`)</h2>
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6 shadow-xs">
+            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">About Us &amp; Abhijit Sarkar Photo Uploader</h2>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center bg-slate-50 p-6 rounded-2xl border border-slate-200">
+              <div className="sm:col-span-4 flex flex-col items-center">
+                {content.abhijit_photo_url ? (
+                  <img
+                    src={content.abhijit_photo_url}
+                    alt="Abhijit Sarkar"
+                    className="w-32 h-32 rounded-full object-cover border-2 border-emerald-500 shadow-md mb-3"
+                  />
+                ) : (
+                  <div className="w-32 h-32 rounded-full bg-slate-900 text-emerald-400 flex items-center justify-center font-bold mb-3">
+                    No Photo
+                  </div>
+                )}
+                <span className="text-[11px] text-slate-500">Current Founder Photo</span>
+              </div>
+
+              <div className="sm:col-span-8 space-y-3">
+                <label className="block text-xs font-bold text-slate-900 uppercase">Upload Abhijit Sarkar Photo</label>
+                <p className="text-xs text-slate-500">Select a high-resolution professional portrait image (JPG, PNG) from your device.</p>
+                <label className="inline-flex items-center gap-2 bg-navy-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer shadow-xs transition">
+                  <Upload className="w-4 h-4" />
+                  {uploading ? "Uploading..." : "Choose Image File"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, "abhijit_photo_url")}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Headline (H1)</label>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">About Us Title</label>
               <input
                 type="text"
                 value={content.about_hero_title || ""}
@@ -503,7 +311,7 @@ export default function AdminPortal() {
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Executive Summary</label>
+              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">About Us Subtitle</label>
               <textarea
                 rows={3}
                 value={content.about_hero_subtitle || ""}
@@ -511,125 +319,39 @@ export default function AdminPortal() {
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
               />
             </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Statutory MOA Clause III(A) Extract</label>
-              <textarea
-                rows={4}
-                value={content.about_moa_quote || ""}
-                onChange={(e) => setContent({ ...content, about_moa_quote: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
+          </div>
+        )}
+
+        {activeTab === "media" && (
+          <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6 shadow-xs">
+            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Partner &amp; AMC Logo Manager</h2>
+            <p className="text-xs text-slate-600">
+              Upload institutional partner logos (Nuvama, Axis, IIFL, HDFC, SBI, ICICI, Quant, etc.) to display them dynamically on the homepage partner rail.
+            </p>
+            <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 text-center space-y-3">
+              <ImageIcon className="w-10 h-10 text-slate-400 mx-auto" />
+              <h4 className="text-sm font-bold text-slate-900">Upload Partner Logo</h4>
+              <label className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer transition">
+                <Upload className="w-4 h-4" />
+                Upload Logo Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e, "partner_logo_new")}
+                  className="hidden"
+                />
+              </label>
             </div>
           </div>
         )}
 
-        {/* 9. Compliance */}
-        {activeTab === "compliance" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Compliance &amp; Investor Charter (`/compliance`)</h2>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Headline (H1)</label>
-              <input
-                type="text"
-                value={content.compliance_hero_title || ""}
-                onChange={(e) => setContent({ ...content, compliance_hero_title: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Lead Paragraph</label>
-              <textarea
-                rows={3}
-                value={content.compliance_hero_subtitle || ""}
-                onChange={(e) => setContent({ ...content, compliance_hero_subtitle: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Level 1 Grievance Email</label>
-                <input
-                  type="email"
-                  value={content.compliance_grievance_email || ""}
-                  onChange={(e) => setContent({ ...content, compliance_grievance_email: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Level 2 Compliance Officer Email</label>
-                <input
-                  type="email"
-                  value={content.compliance_officer_email || ""}
-                  onChange={(e) => setContent({ ...content, compliance_officer_email: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 10. Contact Info */}
-        {activeTab === "contact" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs space-y-4">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Contact &amp; Branch Desk (`/contact`)</h2>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Headline (H1)</label>
-              <input
-                type="text"
-                value={content.contact_hero_title || ""}
-                onChange={(e) => setContent({ ...content, contact_hero_title: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Lead Paragraph</label>
-              <textarea
-                rows={3}
-                value={content.contact_hero_subtitle || ""}
-                onChange={(e) => setContent({ ...content, contact_hero_subtitle: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Registered Branch Address</label>
-                <input
-                  type="text"
-                  value={content.contact_address || ""}
-                  onChange={(e) => setContent({ ...content, contact_address: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Primary Desk Phone</label>
-                <input
-                  type="text"
-                  value={content.contact_phone_primary || ""}
-                  onChange={(e) => setContent({ ...content, contact_phone_primary: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Primary Desk Email</label>
-                <input
-                  type="email"
-                  value={content.contact_email_primary || ""}
-                  onChange={(e) => setContent({ ...content, contact_email_primary: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 11. Leads Inbox */}
         {activeTab === "inquiries" && (
           <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-slate-900">Incoming Portfolio Consultations</h2>
+              <h2 className="text-lg font-bold text-slate-900">Consultation Inquiries Inbox</h2>
               <button
                 onClick={fetchInquiries}
-                className="flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 border border-slate-200 px-3 py-1.5 rounded-lg"
+                className="flex items-center gap-1.5 text-xs text-slate-600 border border-slate-200 px-3 py-1.5 rounded-lg"
               >
                 <RefreshCw className="w-3.5 h-3.5" /> Refresh
               </button>
@@ -644,63 +366,24 @@ export default function AdminPortal() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-3">
                         <span className="font-bold text-slate-900 text-sm">{inq.full_name}</span>
-                        <span
-                          className={`text-[10px] px-2 py-0.5 rounded-full font-semibold uppercase ${
-                            inq.status === "contacted"
-                              ? "bg-blue-50 text-blue-700 border border-blue-200"
-                              : inq.status === "closed"
-                              ? "bg-slate-100 text-slate-600"
-                              : "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                          }`}
-                        >
+                        <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-semibold uppercase">
                           {inq.status}
                         </span>
-                        <span className="text-[11px] text-slate-400 flex items-center gap-1">
-                          <Clock className="w-3 h-3" />
-                          {new Date(inq.created_at).toLocaleDateString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
                       </div>
-                      <div className="flex flex-wrap gap-4 text-xs text-slate-600">
-                        <span className="flex items-center gap-1">
-                          <Phone className="w-3.5 h-3.5 text-slate-400" /> {inq.phone}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Mail className="w-3.5 h-3.5 text-slate-400" /> {inq.email}
-                        </span>
-                        <span className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px]">
-                          {inq.service}
-                        </span>
+                      <div className="flex gap-4 text-xs text-slate-600">
+                        <span>Phone: {inq.phone}</span>
+                        <span>Email: {inq.email}</span>
                       </div>
-                      {inq.message && (
-                        <p className="text-xs text-slate-600 italic mt-1 bg-slate-50 p-2 rounded">
-                          &ldquo;{inq.message}&rdquo;
-                        </p>
-                      )}
+                      {inq.message && <p className="text-xs text-slate-600 italic">"{inq.message}"</p>}
                     </div>
-
-                    <div className="flex items-center gap-2 shrink-0">
-                      {inq.status === "pending" && (
-                        <button
-                          onClick={() => updateInquiryStatus(inq.id, "contacted")}
-                          className="text-xs bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-md transition"
-                        >
-                          Mark Contacted
-                        </button>
-                      )}
-                      {inq.status === "contacted" && (
-                        <button
-                          onClick={() => updateInquiryStatus(inq.id, "closed")}
-                          className="text-xs bg-slate-200 hover:bg-slate-300 text-slate-800 px-3 py-1.5 rounded-md transition"
-                        >
-                          Close Lead
-                        </button>
-                      )}
-                    </div>
+                    {inq.status === "pending" && (
+                      <button
+                        onClick={() => updateInquiryStatus(inq.id, "contacted")}
+                        className="text-xs bg-slate-900 text-white px-3 py-1.5 rounded-md"
+                      >
+                        Mark Contacted
+                      </button>
+                    )}
                   </div>
                 ))}
               </div>
