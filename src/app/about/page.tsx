@@ -1,17 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Award, Building2, CheckCircle2, ShieldCheck, ArrowRight, Sparkles } from "lucide-react";
+import { Award, Building2, CheckCircle2, ShieldCheck, ArrowRight, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 export default function AboutPage() {
   const [content, setContent] = useState<Record<string, string>>({
-    about_hero_title: "Built on Radical Transparency & Zero Client Custody.",
+    about_hero_title: "Institutional Credibility & Trusted Leadership",
     about_hero_subtitle:
-      "Headquartered in Khardaha, North 24 Parganas (Kolkata Metropolitan Area, West Bengal), Sarkar Capital Private Limited was founded with a singular mission: to provide institutional-grade, unbiased financial product distribution to Indian families, salaried professionals, and HNIs without hidden commissions or product pushing.",
-    about_moa_quote:
-      "To carry on the business of distribution, marketing, sub-broking, referral, and intermediary facilitation of a wide spectrum of financial, investment, and wealth management products... strictly without engaging in direct banking, non-banking financial lending, chit fund operations, or accepting public deposits.",
+      "Sarkar Capital Private Limited is an institutional financial distribution company engineered on radical transparency, modern digital tools, and zero client capital custody.",
   });
 
   useEffect(() => {
@@ -33,7 +31,7 @@ export default function AboutPage() {
       {/* Header */}
       <div className="max-w-3xl space-y-4">
         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3.5 py-1 text-xs font-semibold text-emerald-900">
-          <ShieldCheck className="h-4 w-4 text-emerald-600" /> West Bengal Registered Intermediary • Pan-India Reach
+          <ShieldCheck className="h-4 w-4 text-emerald-600" /> Mumbai, Kolkata &amp; Pan-India Presence
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-navy-900 tracking-tight">
           {content.about_hero_title}
@@ -43,7 +41,46 @@ export default function AboutPage() {
         </p>
       </div>
 
-      {/* Two Pillar Cards */}
+      {/* Founder & Chief Wealth Planner Profile Card */}
+      <section className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="lg:col-span-4 flex flex-col items-center text-center space-y-4">
+          <div className="w-36 h-36 rounded-full bg-slate-900 text-emerald-400 flex items-center justify-center text-4xl font-black shadow-xl border-4 border-emerald-500/30">
+            AS
+          </div>
+          <div>
+            <h3 className="text-xl font-extrabold text-navy-900">Abhijit Sarkar</h3>
+            <span className="text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full inline-block mt-1">
+              Founder &amp; Chief Wealth Planner
+            </span>
+          </div>
+        </div>
+
+        <div className="lg:col-span-8 space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <h4 className="text-lg font-bold text-navy-900">Leading With Clarity &amp; Discipline</h4>
+          <p>
+            With extensive expertise in institutional wealth management and retail portfolio architecture, Abhijit Sarkar established Sarkar Capital to provide older investors, families, and busy professionals with a modern credibility tool and transparent guidance. 
+          </p>
+          <p>
+            Operating across <strong>Mumbai, Kolkata, and Pan-India</strong>, our advisory desk ensures your investments are backed by NISM certifications, AMFI corporate standards, and zero proprietary fund pooling.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-3">
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
+              <span className="text-navy-900 font-extrabold block text-base">₹10 Cr+</span>
+              <span className="text-[11px] text-slate-500">Target Asset AUM</span>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
+              <span className="text-emerald-700 font-extrabold block text-base">40+</span>
+              <span className="text-[11px] text-slate-500">Empaneled AMCs</span>
+            </div>
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center col-span-2 sm:col-span-1">
+              <span className="text-blue-700 font-extrabold block text-base">100%</span>
+              <span className="text-[11px] text-slate-500">Direct Clearing</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Statutory & Regulatory Badges */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
           <div className="p-3 bg-emerald-100 text-emerald-700 w-fit rounded-2xl">
@@ -51,7 +88,7 @@ export default function AboutPage() {
           </div>
           <h3 className="text-xl font-bold text-navy-900">Statutory Framework &amp; NIC Mandate</h3>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Operating strictly within authorized corporate guidelines under National Industrial Classifications:
+            Incorporated entity operating under National Industrial Classifications:
           </p>
           <ul className="text-xs space-y-2.5 text-slate-700 pt-2 border-t border-slate-100">
             <li className="flex items-start gap-2">
@@ -69,9 +106,9 @@ export default function AboutPage() {
           <div className="p-3 bg-blue-100 text-blue-700 w-fit rounded-2xl">
             <Award className="h-6 w-6" />
           </div>
-          <h3 className="text-xl font-bold text-navy-900">Accreditation &amp; Governance Standards</h3>
+          <h3 className="text-xl font-bold text-navy-900">Accreditation Standards</h3>
           <p className="text-xs text-slate-600 leading-relaxed">
-            Every wealth specialist at Sarkar Capital adheres to rigorous professional certifications:
+            Adhering to strict professional certification frameworks:
           </p>
           <ul className="text-xs space-y-2.5 text-slate-700 pt-2 border-t border-slate-100">
             <li className="flex items-start gap-2">
@@ -80,7 +117,7 @@ export default function AboutPage() {
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
-              <span>AMFI Corporate ARN Desk backed by verified EUIN holders</span>
+              <span>AMFI Corporate ARN Desk with verified EUIN holders</span>
             </li>
             <li className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -88,32 +125,6 @@ export default function AboutPage() {
             </li>
           </ul>
         </div>
-      </div>
-
-      {/* MOA Quote Box */}
-      <div className="bg-slate-100 border border-slate-200 rounded-3xl p-8 space-y-3">
-        <h3 className="text-sm font-bold text-navy-900 uppercase tracking-wider">
-          Official Memorandum of Association (MOA) Extract
-        </h3>
-        <blockquote className="text-xs italic text-slate-700 border-l-2 border-emerald-600 pl-4 py-1 leading-relaxed">
-          &ldquo;{content.about_moa_quote}&rdquo;
-        </blockquote>
-      </div>
-
-      {/* CTA */}
-      <div className="bg-navy-900 rounded-3xl p-8 sm:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
-        <div className="space-y-1 text-center md:text-left">
-          <h3 className="text-xl sm:text-2xl font-bold">Ready to experience transparent wealth distribution?</h3>
-          <p className="text-xs text-slate-300 max-w-xl">
-            Schedule a complimentary 30-minute portfolio X-Ray with our West Bengal or digital advisory desks.
-          </p>
-        </div>
-        <Link
-          href="/#consultation"
-          className="px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-xl transition flex items-center gap-2 shrink-0 shadow-lg"
-        >
-          Book Free Portfolio Review <ArrowRight className="w-4 h-4" />
-        </Link>
       </div>
     </div>
   );
