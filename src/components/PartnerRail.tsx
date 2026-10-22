@@ -37,7 +37,7 @@ export default function PartnerRail() {
           {partners.map((partner, idx) => (
             <div
               key={idx}
-              className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex flex-col justify-center items-center text-center hover:border-emerald-500/60 hover:shadow-xs transition"
+              className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex flex-col justify-center items-center text-center hover:border-emerald-500/60 transition"
             >
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-0.5">
                 {partner.role}
