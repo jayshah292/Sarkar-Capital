@@ -8,7 +8,6 @@ import {
   Clock,
   ShieldCheck,
   MapPin,
-  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -71,21 +70,21 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
       />
 
       <div className="max-w-3xl space-y-4">
-        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3.5 py-1 text-xs font-semibold text-emerald-800">
-          <Building2 className="h-4 w-4" /> Direct Advisory &amp; Corporate Desk
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3.5 py-1.5 text-xs font-semibold text-emerald-900">
+          <Building2 className="h-4 w-4 text-emerald-600" /> Direct Advisory &amp; Corporate Desk
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-navy-900 tracking-tight">
           Connect With Sarkar Capital
         </h1>
         <p className="text-base text-slate-600 leading-relaxed">
-          Schedule an in-person meeting at our West Bengal branch or request a digital portfolio consultation with certified NISM wealth specialists.
+          Schedule an in-person consultation at our West Bengal branch or request a digital portfolio X-Ray with certified NISM wealth specialists.
         </p>
       </div>
 
