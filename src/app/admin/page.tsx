@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Lock, Save, LogOut, Clock, Mail, Phone, RefreshCw, Upload, Image as ImageIcon } from "lucide-react";
+import { Lock, Save, LogOut, RefreshCw, Upload, Image as ImageIcon, User } from "lucide-react";
 
 interface Inquiry {
   id: string;
@@ -15,7 +15,7 @@ interface Inquiry {
   status: string;
 }
 
-type TabType = "homepage" | "about" | "media" | "inquiries";
+type TabType = "homepage" | "about" | "logos" | "inquiries";
 
 export default function AdminPortal() {
   const [session, setSession] = useState<any>(null);
@@ -26,7 +26,7 @@ export default function AdminPortal() {
 
   const [activeTab, setActiveTab] = useState<TabType>("homepage");
   const [saveStatus, setSaveStatus] = useState("");
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState<string | null>(null);
 
   const [content, setContent] = useState<Record<string, string>>({
     hero_title: "",
@@ -34,7 +34,19 @@ export default function AdminPortal() {
     about_hero_title: "",
     about_hero_subtitle: "",
     abhijit_photo_url: "",
-    partner_logos: "",
+    logo_nuvama: "",
+    logo_axis: "",
+    logo_iifl: "",
+    logo_creso: "",
+    logo_prudent: "",
+    logo_sbi: "",
+    logo_hdfc: "",
+    logo_icici: "",
+    logo_stallion: "",
+    logo_carlenion: "",
+    logo_parag: "",
+    logo_nippon: "",
+    logo_quant: "",
   });
 
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
@@ -103,17 +115,17 @@ export default function AdminPortal() {
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, keyName: string) => {
     try {
-      setUploading(true);
+      setUploading(keyName);
       const file = e.target.files?.[0];
       if (!file) return;
 
       const fileExt = file.name.split(".").pop();
-      const fileName = `${keyName}-${Math.random()}.${fileExt}`;
+      const fileName = `${keyName}-${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from("public-assets")
-        .upload(filePath, file);
+        .upload(filePath, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
@@ -126,7 +138,7 @@ export default function AdminPortal() {
     } catch (error: any) {
       alert("Error uploading image: " + error.message);
     } finally {
-      setUploading(false);
+      setUploading(null);
     }
   };
 
@@ -192,13 +204,29 @@ export default function AdminPortal() {
     );
   }
 
+  const logoKeys = [
+    { key: "logo_nuvama", name: "Nuvama", role: "Partnered Institution" },
+    { key: "logo_axis", name: "Axis Securities", role: "Partnered Institution" },
+    { key: "logo_iifl", name: "IIFL Capital", role: "Partnered Institution" },
+    { key: "logo_creso", name: "Creso", role: "Partnered Institution" },
+    { key: "logo_prudent", name: "Prudent", role: "Partnered Institution" },
+    { key: "logo_sbi", name: "SBI AMC", role: "Empaneled AMC" },
+    { key: "logo_hdfc", name: "HDFC AMC", role: "Empaneled AMC" },
+    { key: "logo_icici", name: "ICICI AMC", role: "Empaneled AMC" },
+    { key: "logo_stallion", name: "Stallion", role: "Partnered Institution" },
+    { key: "logo_carlenion", name: "Carlenion", role: "Partnered Institution" },
+    { key: "logo_parag", name: "Parag Parikh AMC", role: "Empaneled AMC" },
+    { key: "logo_nippon", name: "Nippon India AMC", role: "Empaneled AMC" },
+    { key: "logo_quant", name: "Quant AMC", role: "Empaneled AMC" },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50 py-10">
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl border border-slate-200 mb-6 gap-4 shadow-xs">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Admin Studio &amp; Media Uploader</h1>
-            <p className="text-xs text-slate-500">Manage website copy, upload Abhijit Sarkar&apos;s photo, partner logos, and view leads.</p>
+            <p className="text-xs text-slate-500">Manage website copy, upload Abhijit Sarkar&apos;s photo, and upload partner/AMC logos.</p>
           </div>
           <div className="flex items-center gap-3">
             {saveStatus && <span className="text-xs text-emerald-600 font-semibold">{saveStatus}</span>}
@@ -220,17 +248,17 @@ export default function AdminPortal() {
           </div>
         </div>
 
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
           {[
             { id: "homepage", label: "Homepage Copy" },
             { id: "about", label: "About & Founder Photo" },
-            { id: "media", label: "Partner Logos Manager" },
+            { id: "logos", label: "Partner Logos Manager" },
             { id: "inquiries", label: `Leads Inbox (${inquiries.filter((i) => i.status === "pending").length})` },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as TabType)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${
                 activeTab === tab.id
                   ? "bg-navy-900 text-white shadow-xs"
                   : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-100"
@@ -279,7 +307,7 @@ export default function AdminPortal() {
                   />
                 ) : (
                   <div className="w-32 h-32 rounded-full bg-slate-900 text-emerald-400 flex items-center justify-center font-bold mb-3">
-                    No Photo
+                    <User className="w-12 h-12" />
                   </div>
                 )}
                 <span className="text-[11px] text-slate-500">Current Founder Photo</span>
@@ -290,7 +318,7 @@ export default function AdminPortal() {
                 <p className="text-xs text-slate-500">Select a high-resolution professional portrait image (JPG, PNG) from your device.</p>
                 <label className="inline-flex items-center gap-2 bg-navy-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer shadow-xs transition">
                   <Upload className="w-4 h-4" />
-                  {uploading ? "Uploading..." : "Choose Image File"}
+                  {uploading === "abhijit_photo_url" ? "Uploading..." : "Choose Image File"}
                   <input
                     type="file"
                     accept="image/*"
@@ -322,25 +350,44 @@ export default function AdminPortal() {
           </div>
         )}
 
-        {activeTab === "media" && (
+        {activeTab === "logos" && (
           <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6 shadow-xs">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Partner &amp; AMC Logo Manager</h2>
-            <p className="text-xs text-slate-600">
-              Upload institutional partner logos (Nuvama, Axis, IIFL, HDFC, SBI, ICICI, Quant, etc.) to display them dynamically on the homepage partner rail.
-            </p>
-            <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 text-center space-y-3">
-              <ImageIcon className="w-10 h-10 text-slate-400 mx-auto" />
-              <h4 className="text-sm font-bold text-slate-900">Upload Partner Logo</h4>
-              <label className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer transition">
-                <Upload className="w-4 h-4" />
-                Upload Logo Image
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e, "partner_logo_new")}
-                  className="hidden"
-                />
-              </label>
+            <div>
+              <h2 className="text-lg font-bold text-slate-900">Partner &amp; AMC Logo Manager</h2>
+              <p className="text-xs text-slate-600 mt-1">
+                Upload transparent PNG or JPEG logos for each institutional partner and AMC.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
+              {logoKeys.map((item) => {
+                const logoUrl = content[item.key];
+                return (
+                  <div key={item.key} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col items-center text-center space-y-3">
+                    <div className="h-14 w-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center p-2 overflow-hidden shadow-2xs">
+                      {logoUrl ? (
+                        <img src={logoUrl} alt={item.name} className="max-h-full max-w-full object-contain" />
+                      ) : (
+                        <span className="text-[10px] font-bold text-slate-400">Default Logo</span>
+                      )}
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">{item.role}</span>
+                      <h4 className="text-xs font-black text-slate-900">{item.name}</h4>
+                    </div>
+                    <label className="w-full inline-flex items-center justify-center gap-1.5 bg-navy-900 hover:bg-slate-800 text-white px-3 py-2 rounded-xl text-[11px] font-semibold cursor-pointer transition">
+                      <Upload className="w-3.5 h-3.5" />
+                      {uploading === item.key ? "Uploading..." : "Upload Logo"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, item.key)}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
