@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Award, Building2, CheckCircle2, ShieldCheck, ArrowRight, UserCheck } from "lucide-react";
+import { Award, Building2, CheckCircle2, ShieldCheck, UserCheck } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
@@ -66,7 +66,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-3">
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
               <span className="text-navy-900 font-extrabold block text-base">₹10 Cr+</span>
-              <span className="text-[11px] text-slate-500">Target Asset AUM</span>
+              <span className="text-[11px] text-slate-500">Target Managed AUM</span>
             </div>
             <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
               <span className="text-emerald-700 font-extrabold block text-base">40+</span>
