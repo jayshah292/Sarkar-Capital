@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import "./globals.css";
 
+const GTM_ID = "GTM-5GCNVBVM";
+const SITE_URL = "https://sarkar.capital";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sarkarcapital.in"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Sarkar Capital | Regulated Financial Product Distribution",
     template: "%s | Sarkar Capital",
@@ -25,6 +29,9 @@ export const metadata: Metadata = {
   authors: [{ name: "Sarkar Capital Private Limited" }],
   creator: "Sarkar Capital",
   publisher: "Sarkar Capital",
+  alternates: {
+    canonical: SITE_URL,
+  },
   robots: {
     index: true,
     follow: true,
@@ -39,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://sarkarcapital.in",
+    url: SITE_URL,
     siteName: "Sarkar Capital",
     title: "Sarkar Capital | Disciplined Wealth Distribution",
     description:
@@ -63,31 +70,26 @@ export default function RootLayout({
     "@graph": [
       {
         "@type": "FinancialService",
-        "@id": "https://sarkarcapital.in/#organization",
+        "@id": `${SITE_URL}/#organization`,
         "name": "Sarkar Capital Private Limited",
-        "url": "https://sarkarcapital.in",
-        "logo": "https://sarkarcapital.in/logo.png",
+        "url": SITE_URL,
+        "logo": `${SITE_URL}/logo.png`,
         "description":
           "Regulated financial intermediary facilitating mutual funds, secondary market equities, fixed income instruments, and risk covers under NIC 66120 and 66220. Operates on a non-custodial architecture.",
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": "Khardaha",
-          "addressLocality": "North 24 Parganas, Kolkata",
+          "addressLocality": "Kolkata",
           "addressRegion": "West Bengal",
-          "postalCode": "700117",
           "addressCountry": "IN"
         },
-        "geo": {
-          "@type": "GeoCoordinates",
-          "latitude": "22.72",
-          "longitude": "88.38"
-        },
-        "areaServed": {
-          "@type": "Country",
-          "name": "India"
-        },
+        "areaServed": [
+          { "@type": "City", "name": "Kolkata" },
+          { "@type": "City", "name": "Mumbai" },
+          { "@type": "Country", "name": "India" }
+        ],
         "currenciesAccepted": "INR",
-        "paymentAccepted": "Direct Bank Transfer, Net Banking, UPI to Regulated Clearing Corporations",
+        "paymentAccepted":
+          "Direct Bank Transfer, Net Banking, UPI to Regulated Clearing Corporations",
         "hasOfferCatalog": {
           "@type": "OfferCatalog",
           "name": "Institutional Distribution Desks",
@@ -97,7 +99,8 @@ export default function RootLayout({
               "itemOffered": {
                 "@type": "Service",
                 "name": "Mutual Funds & SIP Planning Desk",
-                "description": "AMFI-registered distribution across 40+ AMCs with zero client capital custody."
+                "description":
+                  "AMFI-registered distribution across 40+ AMCs with zero client capital custody."
               }
             },
             {
@@ -105,7 +108,8 @@ export default function RootLayout({
               "itemOffered": {
                 "@type": "Service",
                 "name": "Equity Broking & Demat Desk",
-                "description": "Authorised Person desk and sub-broker alignments through HDFC Securities and IIFL."
+                "description":
+                  "Authorised Person desk and sub-broker alignments through HDFC Securities and IIFL."
               }
             },
             {
@@ -113,7 +117,8 @@ export default function RootLayout({
               "itemOffered": {
                 "@type": "Service",
                 "name": "Fixed Income & Capital Safety Desk",
-                "description": "Distribution of Sovereign Gold Bonds (SGBs), AAA Corporate Fixed Deposits, and 54EC Capital Gains Bonds."
+                "description":
+                  "Distribution of Sovereign Gold Bonds (SGBs), AAA Corporate Fixed Deposits, and 54EC Capital Gains Bonds."
               }
             },
             {
@@ -121,7 +126,8 @@ export default function RootLayout({
               "itemOffered": {
                 "@type": "Service",
                 "name": "Insurance & Risk Protection Desk",
-                "description": "Unbundled pure term life and comprehensive family health floaters under NIC 66220."
+                "description":
+                  "Unbundled pure term life and comprehensive family health floaters under NIC 66220."
               }
             }
           ]
@@ -129,11 +135,11 @@ export default function RootLayout({
       },
       {
         "@type": "WebSite",
-        "@id": "https://sarkarcapital.in/#website",
-        "url": "https://sarkarcapital.in",
+        "@id": `${SITE_URL}/#website`,
+        "url": SITE_URL,
         "name": "Sarkar Capital",
         "publisher": {
-          "@id": "https://sarkarcapital.in/#organization"
+          "@id": `${SITE_URL}/#organization`
         }
       }
     ]
@@ -142,12 +148,34 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google Tag Manager */}
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {`
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','${GTM_ID}');
+          `}
+        </Script>
+
+        {/* Global Structured Data (AEO / SEO) */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
       <body className="min-h-screen flex flex-col bg-slate-50 antialiased selection:bg-emerald-100 selection:text-emerald-900">
+        {/* Google Tag Manager (noscript fallback) */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
+
         <Navbar />
         <main className="flex-1">{children}</main>
         <WhatsAppButton />
