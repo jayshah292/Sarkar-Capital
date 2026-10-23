@@ -1,198 +1,135 @@
-import Link from "next/link";
-import PartnerRail from "@/components/PartnerRail";
+"use client";
+
+import { useEffect, useState } from "react";
+import { ShieldCheck, User, Building2, CheckCircle2, Award } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import {
-  ShieldCheck,
-  Award,
-  TrendingUp,
-  Building2,
-  HeartHandshake,
-  ArrowRight,
-} from "lucide-react";
 
-export const revalidate = 0;
+export default function AboutPage() {
+  const [content, setContent] = useState<Record<string, string>>({
+    about_hero_title: "Institutional Credibility & Disciplined Wealth Planning",
+    about_hero_subtitle:
+      "Sarkar Capital Private Limited is an institutional financial distribution firm engineered on radical transparency, modern digital architecture, and non-custodial capital safety.",
+    founder_name: "Abhijit Sarkar",
+    founder_title: "Founder & Chief Wealth Planner",
+    founder_photo_url: "",
+    founder_bio_p1:
+      "With over two decades of financial markets experience, Abhijit Sarkar founded Sarkar Capital to bridge the gap between premier institutional asset managers and retail, salaried, and HNI investors.",
+    founder_bio_p2:
+      "Operating across Mumbai, Kolkata, and Pan-India, our desk adheres to strict professional code of conduct, zero proprietary fund pooling, and transparent execution across 40+ empaneled AMCs and insurers.",
+    about_mission_title: "Our Operational Mission",
+    about_mission_text:
+      "To eliminate commission bias and capital custody risk by providing direct platform routing, regular portfolio rebalancing, and transparent guidance.",
+  });
 
-async function getSiteContent() {
-  try {
-    const { data } = await supabase.from("site_content").select("key, value");
-    const map: Record<string, string> = {};
-    if (data) {
-      data.forEach((row: { key: string; value: string }) => {
-        map[row.key] = row.value;
-      });
+  useEffect(() => {
+    async function loadContent() {
+      const { data } = await supabase.from("site_content").select("*");
+      if (data && data.length > 0) {
+        const mapped: Record<string, string> = {};
+        data.forEach((row: { key: string; value: string }) => {
+          mapped[row.key] = row.value;
+        });
+        setContent((prev) => ({ ...prev, ...mapped }));
+      }
     }
-    return map;
-  } catch {
-    return {};
-  }
-}
-
-export default async function AboutPage() {
-  const c = await getSiteContent();
-  const abhijitPhoto = c.founder_photo_url || c.abhijit_photo_url || "";
-  const sampaPhoto = c.cofounder_photo_url || c.sampa_photo_url || "";
-
-  const stats = [
-    { value: c.stat_aum_val || "₹10 Cr+", label: "Managed AUM", icon: TrendingUp },
-    { value: c.stat_years_val || "25+ Yrs", label: "Years in Business", icon: Award },
-    { value: c.stat_partners_val || "40+", label: "AMCs Empaneled", icon: Building2 },
-    { value: c.stat_lives_val || "2,500+", label: "Lives Protected", icon: HeartHandshake },
-  ];
+    loadContent();
+  }, []);
 
   return (
-    <div className="space-y-0">
-      <section className="bg-slate-50 py-14 border-b border-slate-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-          {/* Header */}
-          <div className="text-center max-w-3xl mx-auto space-y-3">
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-200">
-              <ShieldCheck className="w-4 h-4" /> Mumbai • Kolkata • Pan-India
-            </div>
-            <h1 className="text-3xl sm:text-5xl font-black text-navy-900 tracking-tight">
-              {c.about_hero_title || "25+ Years of Trusted Family Wealth & Protection Guidance"}
-            </h1>
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-              {c.about_hero_subtitle ||
-                "Sarkar Capital is a unified multi-product financial distribution partner built on clarity, long-term relationship trust, and 100% direct-to-institution safety."}
-            </p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+      {/* Header */}
+      <div className="max-w-3xl space-y-4">
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-3.5 py-1 text-xs font-semibold text-emerald-900">
+          <ShieldCheck className="h-4 w-4 text-emerald-600" /> Mumbai, Kolkata &amp; Pan-India Presence
+        </div>
+        <h1 className="text-3xl sm:text-5xl font-extrabold text-navy-900 tracking-tight">
+          {content.about_hero_title}
+        </h1>
+        <p className="text-base text-slate-600 leading-relaxed whitespace-pre-line">
+          {content.about_hero_subtitle}
+        </p>
+      </div>
+
+      {/* Founder Profile Card */}
+      <section className="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="lg:col-span-4 flex flex-col items-center text-center space-y-4">
+          <div className="relative w-40 h-40 rounded-full overflow-hidden bg-slate-900 text-emerald-400 flex items-center justify-center shadow-xl border-4 border-emerald-500/30">
+            {content.founder_photo_url ? (
+              <img
+                src={content.founder_photo_url}
+                alt={content.founder_name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User className="w-16 h-16 text-emerald-400/80" />
+            )}
           </div>
-
-          {/* Highlighted Circular Stat Rings */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 max-w-4xl mx-auto">
-            {stats.map((st, i) => {
-              const Icon = st.icon;
-              return (
-                <div key={i} className="flex flex-col items-center">
-                  <div className="w-36 h-36 rounded-full bg-white border-4 border-emerald-500 shadow-md flex flex-col items-center justify-center p-4 text-center">
-                    <Icon className="w-5 h-5 text-emerald-700 mb-1" />
-                    <span className="text-2xl font-black text-navy-900 leading-none">
-                      {st.value}
-                    </span>
-                    <span className="text-[11px] font-bold text-slate-600 mt-1">
-                      {st.label}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+          <div>
+            <h3 className="text-xl font-extrabold text-navy-900">{content.founder_name}</h3>
+            <span className="text-xs font-bold uppercase tracking-widest text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full inline-block mt-1">
+              {content.founder_title}
+            </span>
           </div>
+        </div>
 
-          {/* Leadership Card 1: Abhijit Sarkar */}
-          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-            <div className="md:col-span-4 flex flex-col items-center text-center">
-              <div className="w-44 h-44 sm:w-52 sm:h-52 rounded-full border-4 border-emerald-600 overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
-                {abhijitPhoto ? (
-                  <img
-                    src={abhijitPhoto}
-                    alt="Abhijit Sarkar - Founder & Chief Wealth Planner"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="text-center p-4">
-                    <span className="text-4xl font-black text-navy-900 block">AS</span>
-                    <span className="text-[11px] font-bold text-slate-500 mt-1 block">
-                      Abhijit Sarkar
-                    </span>
-                  </div>
-                )}
-              </div>
-              <h2 className="text-xl font-black text-navy-900 mt-4">Abhijit Sarkar</h2>
-              <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mt-0.5">
-                Founder &amp; Chief Wealth Planner
-              </p>
-              <p className="text-[11px] text-slate-500 mt-1">
-                AMFI / NISM Certified • 25+ Years Industry Experience
-              </p>
+        <div className="lg:col-span-8 space-y-4 text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <h4 className="text-lg font-bold text-navy-900">Executive Profile &amp; Architecture</h4>
+          <p className="whitespace-pre-line">{content.founder_bio_p1}</p>
+          <p className="whitespace-pre-line">{content.founder_bio_p2}</p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-3">
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
+              <span className="text-navy-900 font-extrabold block text-base">₹10 Cr+</span>
+              <span className="text-[11px] text-slate-500">Target Managed AUM</span>
             </div>
-
-            <div className="md:col-span-8 space-y-4">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                Leadership &amp; Vision
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-black text-navy-900">
-                Personal Relationship Support Meets Institutional Scale
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                With over <strong>25+ years in the financial services business</strong>,{" "}
-                <strong>Abhijit Sarkar</strong> founded Sarkar Capital to give senior citizens, salaried families, business owners, and NRIs a single, dependable roof for every financial decision.
-              </p>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Whether you are setting up a monthly Mutual Fund SIP, investing in Stallion or Carnelian PMS, locking in AAA Corporate FDs (Bajaj, Shriram, LIC Housing, ICICI Home), or securing your family with HDFC Life, LIC, Tata AIA, or HDFC Ergo insurance—every transaction is executed with 100% direct institutional clearing.
-              </p>
-              <div className="pt-2 flex flex-wrap gap-3">
-                <Link
-                  href="/contact"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-5 py-3 rounded-xl transition inline-flex items-center gap-1.5"
-                >
-                  Schedule a Call With Abhijit Sarkar <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  href="/services"
-                  className="bg-slate-100 hover:bg-slate-200 text-navy-900 text-xs font-bold px-5 py-3 rounded-xl transition"
-                >
-                  Explore All 12 Products
-                </Link>
-              </div>
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center">
+              <span className="text-emerald-700 font-extrabold block text-base">40+</span>
+              <span className="text-[11px] text-slate-500">Empaneled AMCs</span>
             </div>
-          </div>
-
-          {/* Leadership Card 2: Sampa Sarkar (Director & Co-Founder) */}
-          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-            <div className="md:col-span-4 flex flex-col items-center text-center">
-              <div className="w-44 h-44 sm:w-52 sm:h-52 rounded-full border-4 border-emerald-600 overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
-                {sampaPhoto ? (
-                  <img
-                    src={sampaPhoto}
-                    alt="Sampa Sarkar - Director & Co-Founder"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="text-center p-4">
-                    <span className="text-4xl font-black text-navy-900 block">SS</span>
-                    <span className="text-[11px] font-bold text-slate-500 mt-1 block">
-                      Sampa Sarkar
-                    </span>
-                  </div>
-                )}
-              </div>
-              <h2 className="text-xl font-black text-navy-900 mt-4">Sampa Sarkar</h2>
-              <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mt-0.5">
-                Director &amp; Co-Founder
-              </p>
-              <p className="text-[11px] text-slate-500 mt-1">
-                Client Operations, Service Governance &amp; Family Protection Desk
-              </p>
-            </div>
-
-            <div className="md:col-span-8 space-y-4">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-                Governance &amp; Client Care
-              </span>
-              <h3 className="text-2xl sm:text-3xl font-black text-navy-900">
-                Seamless Onboarding, Documentation &amp; Family Servicing
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                {c.sampa_bio_p1 ||
-                  "As Director and Co-Founder of Sarkar Capital, Sampa Sarkar oversees client onboarding, KYC compliance, and ongoing service support across Mutual Funds, Corporate FDs, Bonds, and Life & Health Insurance."}
-              </p>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                {c.sampa_bio_p2 ||
-                  "She ensures that senior citizens, retirees, and family members experience smooth paperless execution, timely portfolio statements, nomination updates, and dedicated claim and maturity assistance whenever required."}
-              </p>
-              <div className="pt-2 flex flex-wrap gap-3">
-                <Link
-                  href="/contact"
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-5 py-3 rounded-xl transition inline-flex items-center gap-1.5"
-                >
-                  Connect With Our Relationship Desk <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 text-center col-span-2 sm:col-span-1">
+              <span className="text-blue-700 font-extrabold block text-base">100%</span>
+              <span className="text-[11px] text-slate-500">Direct Non-Custodial</span>
             </div>
           </div>
         </div>
       </section>
 
-      <PartnerRail />
+      {/* Statutory & Accreditation Framework */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+          <div className="p-3 bg-emerald-100 text-emerald-700 w-fit rounded-2xl">
+            <Building2 className="h-6 w-6" />
+          </div>
+          <h3 className="text-xl font-bold text-navy-900">{content.about_mission_title}</h3>
+          <p className="text-xs text-slate-600 leading-relaxed whitespace-pre-line">
+            {content.about_mission_text}
+          </p>
+        </div>
+
+        <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+          <div className="p-3 bg-blue-100 text-blue-700 w-fit rounded-2xl">
+            <Award className="h-6 w-6" />
+          </div>
+          <h3 className="text-xl font-bold text-navy-900">Accreditation Standards</h3>
+          <p className="text-xs text-slate-600 leading-relaxed">
+            Operating under established regulatory credentials:
+          </p>
+          <ul className="text-xs space-y-2.5 text-slate-700 pt-2 border-t border-slate-100">
+            <li className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+              <span>NISM-Series-V-A Certified Mutual Fund Distributors</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+              <span>AMFI Corporate ARN Desk with verified EUIN credentials</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+              <span>Institutional execution tie-ups with leading custody &amp; clearing brokers</span>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
