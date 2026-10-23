@@ -11,21 +11,18 @@ export default function Navbar() {
     { name: "Mutual Funds (40+ AMCs)", href: "/services/mutual-funds" },
     { name: "Demat Account & Equities", href: "/services/equities" },
     { name: "PMS & AIF (HNI Alternates)", href: "/services" },
-    { name: "MLD, Smallcase & ETFs", href: "/services" },
     { name: "Corporate FDs & Bonds", href: "/services/fixed-income" },
-    { name: "GIFT City & NRI Products", href: "/services" },
-    { name: "Home Loans & Insurance Desk", href: "/services/insurance" },
+    { name: "Life & General Insurance", href: "/services/insurance" },
     { name: "View All 12 Products →", href: "/services" },
   ];
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-2xs">
-      {/* Top Credibility Bar */}
       <div className="bg-navy-900 text-slate-300 text-[11px] py-1.5 px-4">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2 font-semibold text-emerald-300">
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>25+ Years in Business • ₹10 Cr+ AUM • 40+ AMCs • 2,500+ Lives Protected</span>
+            <span>25+ Years in Business • ₹10 Cr+ AUM • 40+ Empaneled AMCs</span>
           </div>
           <div className="hidden sm:flex items-center gap-4 text-[11px]">
             <span>Mumbai • Kolkata • Pan-India</span>
@@ -36,7 +33,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Main Navigation Row: Home ➔ About Us ➔ Products ➔ Calculators ➔ Contact Us */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
           <div className="w-9 h-9 rounded-xl bg-navy-900 text-emerald-400 font-black text-lg flex items-center justify-center shadow-xs">
@@ -61,7 +57,6 @@ export default function Navbar() {
             About Us
           </Link>
 
-          {/* Products Dropdown */}
           <div className="relative group">
             <Link
               href="/services"
@@ -93,7 +88,6 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/contact"
@@ -103,7 +97,6 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Hamburger */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="md:hidden p-2 rounded-lg text-navy-900 hover:bg-slate-100"
@@ -128,7 +121,7 @@ export default function Navbar() {
             onClick={() => setMobileOpen(false)}
             className="block py-2 text-sm font-bold text-navy-900 border-b border-slate-100"
           >
-            About Us (Abhijit Sarkar)
+            About Us
           </Link>
           <div className="py-2 border-b border-slate-100 space-y-2">
             <Link
@@ -136,27 +129,15 @@ export default function Navbar() {
               onClick={() => setMobileOpen(false)}
               className="block text-sm font-black text-emerald-800"
             >
-              All 12 Financial Products →
+              All Products →
             </Link>
-            <div className="grid grid-cols-2 gap-1.5 pl-2">
-              {productLinks.slice(0, 6).map((item, i) => (
-                <Link
-                  key={i}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="text-xs font-semibold text-slate-600 py-1"
-                >
-                  • {item.name}
-                </Link>
-              ))}
-            </div>
           </div>
           <Link
             href="/calculators"
             onClick={() => setMobileOpen(false)}
             className="block py-2 text-sm font-bold text-navy-900 border-b border-slate-100"
           >
-            SIP &amp; Wealth Calculators
+            Calculators
           </Link>
           <Link
             href="/contact"
