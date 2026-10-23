@@ -1,88 +1,78 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ShieldCheck } from "lucide-react";
-import { supabase } from "@/lib/supabase";
 
 export default function PartnerRail() {
-  const [content, setContent] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    async function loadLogos() {
-      const { data } = await supabase.from("site_content").select("*");
-      if (data) {
-        const map: Record<string, string> = {};
-        data.forEach((row: { key: string; value: string }) => {
-          map[row.key] = row.value;
-        });
-        setContent(map);
-      }
-    }
-    loadLogos();
-  }, []);
-
   const partners = [
-    { key: "logo_nuvama", name: "Nuvama", role: "Partnered Institution", logo: "https://logo.clearbit.com/nuvama.com" },
-    { key: "logo_axis", name: "Axis Securities", role: "Partnered Institution", logo: "https://logo.clearbit.com/axisdirect.in" },
-    { key: "logo_iifl", name: "IIFL Capital", role: "Partnered Institution", logo: "https://logo.clearbit.com/iifl.com" },
-    { key: "logo_creso", name: "Creso", role: "Partnered Institution", logo: "" },
-    { key: "logo_prudent", name: "Prudent", role: "Partnered Institution", logo: "https://logo.clearbit.com/prudentcorporate.com" },
-    { key: "logo_sbi", name: "SBI AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/sbimf.com" },
-    { key: "logo_hdfc", name: "HDFC AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/hdfcfund.com" },
-    { key: "logo_icici", name: "ICICI AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/icicipruamc.com" },
-    { key: "logo_stallion", name: "Stallion", role: "Partnered Institution", logo: "" },
-    { key: "logo_carlenion", name: "Carlenion", role: "Partnered Institution", logo: "" },
-    { key: "logo_parag", name: "Parag Parikh AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/amc.ppfas.com" },
-    { key: "logo_nippon", name: "Nippon India AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/nipponindiaim.com" },
-    { key: "logo_quant", name: "Quant AMC", role: "Empaneled AMC", logo: "https://logo.clearbit.com/quantmutual.com" },
+    // Wealth & Broking Desks
+    { name: "Nuvama", role: "Wealth & Broking Partner", domain: "nuvama.com" },
+    { name: "Axis Securities", role: "Broking & Demat Partner", domain: "simplehai.axisdirect.in" },
+    { name: "IIFL Capital", role: "Institutional Broking", domain: "indiainfoline.com" },
+    { name: "Creso", role: "Wealth Partner", domain: "cresowealth.com" },
+    { name: "Prudent", role: "Distribution Partner", domain: "prudentcorporate.com" },
+    // Empaneled AMCs
+    { name: "SBI AMC", role: "Empaneled AMC", domain: "sbimf.com" },
+    { name: "HDFC AMC", role: "Empaneled AMC", domain: "hdfcfund.com" },
+    { name: "ICICI AMC", role: "Empaneled AMC", domain: "icicipruamc.com" },
+    { name: "Parag Parikh AMC", role: "Empaneled AMC", domain: "amc.ppfas.com" },
+    { name: "Nippon India AMC", role: "Empaneled AMC", domain: "nipponindiamf.com" },
+    { name: "Quant AMC", role: "Empaneled AMC", domain: "quantmutual.com" },
+    // PMS & Alternates
+    { name: "Stallion", role: "PMS & Alternates", domain: "stallionasset.com" },
+    { name: "Carnelian", role: "PMS & Alternates", domain: "carneliancapital.com" },
+    // Life Insurance Partners
+    { name: "HDFC Life", role: "Life Insurance Partner", domain: "hdfclife.com" },
+    { name: "SBI Life", role: "Life Insurance Partner", domain: "sbilife.co.in" },
+    { name: "LIC", role: "Life Insurance Partner", domain: "licindia.in" },
+    { name: "Tata AIA", role: "Life Insurance Partner", domain: "tataaia.com" },
+    { name: "ICICI Life", role: "Life Insurance Partner", domain: "iciciprulife.com" },
+    // General & Health Insurance Partners
+    { name: "HDFC Ergo", role: "General Insurance", domain: "hdfcergo.com" },
+    { name: "SBI General", role: "General Insurance", domain: "sbigeneral.in" },
+    { name: "Tata AIG", role: "General Insurance", domain: "tataaig.com" },
+    { name: "ManipalCigna", role: "Health Insurance", domain: "manipalcigna.com" },
+    { name: "ICICI Lombard", role: "General Insurance", domain: "icicilombard.com" },
   ];
 
   return (
-    <section className="bg-slate-100/80 border-y border-slate-200 py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div className="text-center max-w-2xl mx-auto space-y-1">
-          <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
-            <ShieldCheck className="w-3.5 h-3.5" /> Institutional Network
+    <section className="bg-slate-100/90 border-y border-slate-200 py-14">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="text-center max-w-3xl mx-auto space-y-2">
+          <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-200">
+            <ShieldCheck className="w-4 h-4" /> Partnered Institutional Ecosystem
           </div>
-          <h3 className="text-2xl font-bold text-navy-900">
-            Distribution &amp; Clearing Ecosystem
-          </h3>
-          <p className="text-xs text-slate-500">
-            Partnered with India&apos;s leading financial institutions and asset management companies.
+          <h2 className="text-2xl sm:text-3xl font-black text-navy-900 tracking-tight">
+            Partnered With India&apos;s Leading Financial Institutions
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600">
+            Direct distribution and execution tie-ups across 40+ AMCs, institutional stock brokers, PMS houses, and IRDAI-regulated insurers.
           </p>
         </div>
 
-        {/* Partner Logo & Badge Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 pt-2">
-          {partners.map((partner, idx) => {
-            const activeLogo = content[partner.key] || partner.logo;
-            return (
-              <div
-                key={idx}
-                className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex flex-col justify-center items-center text-center hover:border-emerald-500/60 transition min-h-[110px]"
-              >
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                  {partner.role}
-                </span>
-                {activeLogo ? (
-                  <div className="h-10 w-28 flex items-center justify-center my-1">
-                    <img
-                      src={activeLogo}
-                      alt={partner.name}
-                      className="max-h-9 max-w-28 object-contain"
-                      onError={(e) => {
-                        // Fallback to text if network logo fails
-                        (e.target as HTMLElement).style.display = "none";
-                      }}
-                    />
-                  </div>
-                ) : null}
-                <span className={`text-xs font-black text-navy-900 leading-snug ${activeLogo ? "text-[11px] mt-1 text-slate-700" : "my-1"}`}>
-                  {partner.name}
-                </span>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 pt-2">
+          {partners.map((partner, idx) => (
+            <div
+              key={idx}
+              className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs flex flex-col justify-between items-center text-center hover:border-emerald-500 hover:shadow-md transition-all duration-200 group"
+            >
+              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-emerald-700 transition-colors block mb-2">
+                {partner.role}
+              </span>
+              <div className="w-11 h-11 mb-2.5 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center p-2 overflow-hidden shadow-inner group-hover:border-emerald-200 transition">
+                <img
+                  src={`https://www.google.com/s2/favicons?domain=${partner.domain}&sz=128`}
+                  alt={`${partner.name} logo`}
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = "none";
+                  }}
+                />
               </div>
-            );
-          })}
+              <span className="text-xs sm:text-sm font-black text-navy-900 leading-snug">
+                {partner.name}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </section>
