@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://sarkarcapital.in";
+  const baseUrl = "https://sarkar.capital";
 
   const routes = [
     "",
@@ -14,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/about",
     "/compliance",
     "/contact",
+    "/suitability",
   ];
 
   return routes.map((route) => ({
