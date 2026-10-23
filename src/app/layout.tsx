@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import "./globals.css";
 
-const GTM_ID = "GTM-5GCNVBVM";
+const GA_MEASUREMENT_ID = "G-QKX4BCH6C3";
 const SITE_URL = "https://sarkar.capital";
 
 export const metadata: Metadata = {
@@ -80,12 +80,12 @@ export default function RootLayout({
           "@type": "PostalAddress",
           "addressLocality": "Kolkata",
           "addressRegion": "West Bengal",
-          "addressCountry": "IN"
+          "addressCountry": "IN",
         },
         "areaServed": [
           { "@type": "City", "name": "Kolkata" },
           { "@type": "City", "name": "Mumbai" },
-          { "@type": "Country", "name": "India" }
+          { "@type": "Country", "name": "India" },
         ],
         "currenciesAccepted": "INR",
         "paymentAccepted":
@@ -100,8 +100,8 @@ export default function RootLayout({
                 "@type": "Service",
                 "name": "Mutual Funds & SIP Planning Desk",
                 "description":
-                  "AMFI-registered distribution across 40+ AMCs with zero client capital custody."
-              }
+                  "AMFI-registered distribution across 40+ AMCs with zero client capital custody.",
+              },
             },
             {
               "@type": "Offer",
@@ -109,8 +109,8 @@ export default function RootLayout({
                 "@type": "Service",
                 "name": "Equity Broking & Demat Desk",
                 "description":
-                  "Authorised Person desk and sub-broker alignments through HDFC Securities and IIFL."
-              }
+                  "Authorised Person desk and sub-broker alignments through HDFC Securities and IIFL.",
+              },
             },
             {
               "@type": "Offer",
@@ -118,8 +118,8 @@ export default function RootLayout({
                 "@type": "Service",
                 "name": "Fixed Income & Capital Safety Desk",
                 "description":
-                  "Distribution of Sovereign Gold Bonds (SGBs), AAA Corporate Fixed Deposits, and 54EC Capital Gains Bonds."
-              }
+                  "Distribution of Sovereign Gold Bonds (SGBs), AAA Corporate Fixed Deposits, and 54EC Capital Gains Bonds.",
+              },
             },
             {
               "@type": "Offer",
@@ -127,11 +127,11 @@ export default function RootLayout({
                 "@type": "Service",
                 "name": "Insurance & Risk Protection Desk",
                 "description":
-                  "Unbundled pure term life and comprehensive family health floaters under NIC 66220."
-              }
-            }
-          ]
-        }
+                  "Unbundled pure term life and comprehensive family health floaters under NIC 66220.",
+              },
+            },
+          ],
+        },
       },
       {
         "@type": "WebSite",
@@ -139,23 +139,27 @@ export default function RootLayout({
         "url": SITE_URL,
         "name": "Sarkar Capital",
         "publisher": {
-          "@id": `${SITE_URL}/#organization`
-        }
-      }
-    ]
+          "@id": `${SITE_URL}/#organization`,
+        },
+      },
+    ],
   };
 
   return (
     <html lang="en">
       <head>
-        {/* Google Tag Manager */}
-        <Script id="google-tag-manager" strategy="afterInteractive">
+        {/* Google tag (gtag.js) */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
           {`
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${GTM_ID}');
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
 
@@ -166,16 +170,6 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col bg-slate-50 antialiased selection:bg-emerald-100 selection:text-emerald-900">
-        {/* Google Tag Manager (noscript fallback) */}
-        <noscript>
-          <iframe
-            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          />
-        </noscript>
-
         <Navbar />
         <main className="flex-1">{children}</main>
         <WhatsAppButton />
