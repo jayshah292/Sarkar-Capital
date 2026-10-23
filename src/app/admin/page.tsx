@@ -2,442 +2,474 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { Lock, Save, LogOut, RefreshCw, Upload, Image as ImageIcon, User } from "lucide-react";
+import {
+  ShieldCheck,
+  LogOut,
+  Save,
+  Upload,
+  Users,
+  FileText,
+  CheckCircle2,
+  Image as ImageIcon,
+} from "lucide-react";
 
-interface Inquiry {
+interface Lead {
   id: string;
-  created_at: string;
   full_name: string;
   email: string;
   phone: string;
-  service: string;
+  investment_horizon: string;
   message: string;
   status: string;
+  created_at: string;
 }
 
-type TabType = "homepage" | "about" | "logos" | "inquiries";
+const CONTENT_FIELDS = [
+  // Leadership Photos & Bios
+  {
+    section: "Leadership Photos & Bios (About Us)",
+    key: "founder_photo_url",
+    label: "Abhijit Sarkar — Portrait Photo",
+    type: "image",
+  },
+  {
+    section: "Leadership Photos & Bios (About Us)",
+    key: "cofounder_photo_url",
+    label: "Sampa Sarkar — Portrait Photo",
+    type: "image",
+  },
+  {
+    section: "Leadership Photos & Bios (About Us)",
+    key: "sampa_bio_p1",
+    label: "Sampa Sarkar — Bio Paragraph 1",
+    type: "textarea",
+  },
+  {
+    section: "Leadership Photos & Bios (About Us)",
+    key: "sampa_bio_p2",
+    label: "Sampa Sarkar — Bio Paragraph 2",
+    type: "textarea",
+  },
+  // Highlighted Circular Metrics
+  {
+    section: "Highlighted Circular Metrics (Homepage & About)",
+    key: "stat_aum_val",
+    label: "Circle 1: Managed AUM (e.g., ₹10 Cr+)",
+    type: "text",
+  },
+  {
+    section: "Highlighted Circular Metrics (Homepage & About)",
+    key: "stat_years_val",
+    label: "Circle 2: Years in Business (e.g., 25+ Yrs)",
+    type: "text",
+  },
+  {
+    section: "Highlighted Circular Metrics (Homepage & About)",
+    key: "stat_partners_val",
+    label: "Circle 3: AMCs Empaneled (e.g., 40+)",
+    type: "text",
+  },
+  {
+    section: "Highlighted Circular Metrics (Homepage & About)",
+    key: "stat_lives_val",
+    label: "Circle 4: Lives Protected (e.g., 2,500+)",
+    type: "text",
+  },
+  // Homepage Copy
+  {
+    section: "Homepage Hero Copy",
+    key: "hero_badge",
+    label: "Homepage Top Badge",
+    type: "text",
+  },
+  {
+    section: "Homepage Hero Copy",
+    key: "hero_title",
+    label: "Homepage Main Headline",
+    type: "textarea",
+  },
+  {
+    section: "Homepage Hero Copy",
+    key: "hero_subtitle",
+    label: "Homepage Subtitle",
+    type: "textarea",
+  },
+  // About Us Page Header
+  {
+    section: "About Us Page Header",
+    key: "about_hero_title",
+    label: "About Us Main Headline",
+    type: "text",
+  },
+  {
+    section: "About Us Page Header",
+    key: "about_hero_subtitle",
+    label: "About Us Subtitle",
+    type: "textarea",
+  },
+];
 
-export default function AdminPortal() {
+export default function AdminPage() {
   const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [activeTab, setActiveTab] = useState<"content" | "leads">("content");
 
-  const [activeTab, setActiveTab] = useState<TabType>("homepage");
-  const [saveStatus, setSaveStatus] = useState("");
-  const [uploading, setUploading] = useState<string | null>(null);
-
-  const [content, setContent] = useState<Record<string, string>>({
-    hero_title: "",
-    hero_subtitle: "",
-    about_hero_title: "",
-    about_hero_subtitle: "",
-    abhijit_photo_url: "",
-    logo_nuvama: "",
-    logo_axis: "",
-    logo_iifl: "",
-    logo_creso: "",
-    logo_prudent: "",
-    logo_sbi: "",
-    logo_hdfc: "",
-    logo_icici: "",
-    logo_stallion: "",
-    logo_carlenion: "",
-    logo_parag: "",
-    logo_nippon: "",
-    logo_quant: "",
+  const [contentMap, setContentMap] = useState<Record<string, string>>({
+    stat_aum_val: "₹10 Cr+",
+    stat_years_val: "25+ Yrs",
+    stat_partners_val: "40+",
+    stat_lives_val: "2,500+",
+    sampa_bio_p1:
+      "As Director and Co-Founder of Sarkar Capital, Sampa Sarkar oversees client onboarding, KYC compliance, and ongoing service support across Mutual Funds, Corporate FDs, Bonds, and Life & Health Insurance.",
+    sampa_bio_p2:
+      "She ensures that senior citizens, retirees, and family members experience smooth paperless execution, timely portfolio statements, nomination updates, and dedicated claim and maturity assistance whenever required.",
   });
 
-  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+  const [saveMessage, setSaveMessage] = useState("");
+  const [leads, setLeads] = useState<Lead[]>([]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) {
-        fetchContent();
-        fetchInquiries();
-      }
-      setLoading(false);
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
     });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) {
-        fetchContent();
-        fetchInquiries();
-      }
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, sess) => {
+      setSession(sess);
     });
-
-    return () => subscription.unsubscribe();
+    return () => listener.subscription.unsubscribe();
   }, []);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoginError("");
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setLoginError(error.message);
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-  };
-
-  const fetchContent = async () => {
-    const { data } = await supabase.from("site_content").select("*");
-    if (data) {
-      const map: Record<string, string> = {};
-      data.forEach((row: { key: string; value: string }) => {
-        map[row.key] = row.value;
-      });
-      setContent((prev) => ({ ...prev, ...map }));
+  useEffect(() => {
+    if (session) {
+      fetchContent();
+      fetchLeads();
     }
-  };
+  }, [session]);
 
-  const fetchInquiries = async () => {
+  async function fetchContent() {
+    const { data } = await supabase.from("site_content").select("key, value");
+    if (data) {
+      const nextMap: Record<string, string> = {};
+      data.forEach((row: { key: string; value: string }) => {
+        nextMap[row.key] = row.value;
+      });
+      setContentMap((prev) => ({ ...prev, ...nextMap }));
+    }
+  }
+
+  async function fetchLeads() {
     const { data } = await supabase
-      .from("inquiries")
+      .from("consultation_leads")
       .select("*")
       .order("created_at", { ascending: false });
-    if (data) setInquiries(data);
-  };
+    if (data) setLeads(data);
+  }
 
-  const handleSaveContent = async () => {
-    setSaveStatus("Publishing updates...");
-    for (const [key, value] of Object.entries(content)) {
-      await supabase.from("site_content").upsert({ key, value });
-    }
-    setSaveStatus("Changes published live!");
-    setTimeout(() => setSaveStatus(""), 3000);
-  };
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+    setAuthError("");
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) setAuthError(error.message);
+  }
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, keyName: string) => {
+  async function handleLogout() {
+    await supabase.auth.signOut();
+  }
+
+  async function handleImageUpload(key: string, file: File) {
+    setUploadingKey(key);
+    setSaveMessage("");
     try {
-      setUploading(keyName);
-      const file = e.target.files?.[0];
-      if (!file) return;
+      const ext = file.name.split(".").pop() || "jpg";
+      const filePath = `leadership/${key}-${Date.now()}.${ext}`;
 
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${keyName}-${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadErr } = await supabase.storage
         .from("public-assets")
         .upload(filePath, file, { upsert: true });
 
-      if (uploadError) throw uploadError;
+      if (uploadErr) throw uploadErr;
 
-      const { data } = supabase.storage.from("public-assets").getPublicUrl(filePath);
-      
-      setContent((prev) => ({ ...prev, [keyName]: data.publicUrl }));
-      await supabase.from("site_content").upsert({ key: keyName, value: data.publicUrl });
-      setSaveStatus("Image uploaded successfully!");
-      setTimeout(() => setSaveStatus(""), 3000);
-    } catch (error: any) {
-      alert("Error uploading image: " + error.message);
+      const { data: pubData } = supabase.storage
+        .from("public-assets")
+        .getPublicUrl(filePath);
+
+      const publicUrl = pubData.publicUrl;
+
+      setContentMap((prev) => ({ ...prev, [key]: publicUrl }));
+
+      await supabase.from("site_content").upsert(
+        { key, value: publicUrl },
+        { onConflict: "key" }
+      );
+
+      setSaveMessage("Photo uploaded and saved live!");
+    } catch (err: any) {
+      alert("Upload error: " + (err.message || "Please check storage bucket permissions."));
     } finally {
-      setUploading(null);
+      setUploadingKey(null);
     }
-  };
+  }
 
-  const updateInquiryStatus = async (id: string, newStatus: string) => {
-    await supabase.from("inquiries").update({ status: newStatus }).eq("id", id);
-    fetchInquiries();
-  };
+  async function handleSaveAll() {
+    setSaving(true);
+    setSaveMessage("");
+    try {
+      const rows = Object.entries(contentMap).map(([key, value]) => ({
+        key,
+        value,
+      }));
+      const { error } = await supabase
+        .from("site_content")
+        .upsert(rows, { onConflict: "key" });
+      if (error) throw error;
+      setSaveMessage("All website changes published live!");
+    } catch (err: any) {
+      alert("Save error: " + err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="text-slate-500 text-sm">Loading Admin Studio...</div>
-      </div>
-    );
+  async function updateLeadStatus(id: string, status: string) {
+    await supabase.from("consultation_leads").update({ status }).eq("id", id);
+    fetchLeads();
   }
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
-        <div className="max-w-md w-full bg-white p-8 rounded-2xl border border-slate-200 shadow-xl">
-          <div className="flex items-center justify-center w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl mx-auto mb-4">
-            <Lock className="w-6 h-6" />
+      <div className="min-h-[75vh] flex items-center justify-center px-4 py-12 bg-slate-50">
+        <form
+          onSubmit={handleLogin}
+          className="bg-white p-8 rounded-3xl border border-slate-200 shadow-lg max-w-md w-full space-y-5"
+        >
+          <div className="flex items-center gap-2 text-emerald-700 font-bold text-xs uppercase tracking-wider">
+            <ShieldCheck className="w-4 h-4" /> Sarkar Capital Admin Studio
           </div>
-          <h2 className="text-2xl font-bold text-center text-slate-900 mb-1">Tinny&apos;s Admin Studio</h2>
-          <p className="text-center text-xs text-slate-500 mb-6">Sarkar Capital CMS &amp; Media Manager</p>
-
-          {loginError && (
-            <div className="p-3 bg-red-50 text-red-700 text-xs rounded-lg mb-4">
-              {loginError}
+          <h1 className="text-2xl font-black text-navy-900">Sign In to Admin</h1>
+          {authError && (
+            <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 font-semibold">
+              {authError}
             </div>
           )}
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Email</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Password</label>
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full py-2.5 bg-slate-900 text-white font-medium text-sm rounded-lg hover:bg-slate-800 transition"
-            >
-              Sign In
-            </button>
-          </form>
-        </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-slate-700">Admin Email</label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-slate-700">Password</label>
+            <input
+              type="password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-navy-900 hover:bg-navy-800 text-white font-bold text-sm py-3 rounded-xl transition"
+          >
+            Access Dashboard
+          </button>
+        </form>
       </div>
     );
   }
 
-  const logoKeys = [
-    { key: "logo_nuvama", name: "Nuvama", role: "Partnered Institution" },
-    { key: "logo_axis", name: "Axis Securities", role: "Partnered Institution" },
-    { key: "logo_iifl", name: "IIFL Capital", role: "Partnered Institution" },
-    { key: "logo_creso", name: "Creso", role: "Partnered Institution" },
-    { key: "logo_prudent", name: "Prudent", role: "Partnered Institution" },
-    { key: "logo_sbi", name: "SBI AMC", role: "Empaneled AMC" },
-    { key: "logo_hdfc", name: "HDFC AMC", role: "Empaneled AMC" },
-    { key: "logo_icici", name: "ICICI AMC", role: "Empaneled AMC" },
-    { key: "logo_stallion", name: "Stallion", role: "Partnered Institution" },
-    { key: "logo_carlenion", name: "Carlenion", role: "Partnered Institution" },
-    { key: "logo_parag", name: "Parag Parikh AMC", role: "Empaneled AMC" },
-    { key: "logo_nippon", name: "Nippon India AMC", role: "Empaneled AMC" },
-    { key: "logo_quant", name: "Quant AMC", role: "Empaneled AMC" },
-  ];
+  const sections = Array.from(new Set(CONTENT_FIELDS.map((f) => f.section)));
 
   return (
-    <div className="min-h-screen bg-slate-50 py-10">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl border border-slate-200 mb-6 gap-4 shadow-xs">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Admin Studio &amp; Media Uploader</h1>
-            <p className="text-xs text-slate-500">Manage website copy, upload Abhijit Sarkar&apos;s photo, and upload partner/AMC logos.</p>
-          </div>
-          <div className="flex items-center gap-3">
-            {saveStatus && <span className="text-xs text-emerald-600 font-semibold">{saveStatus}</span>}
-            {activeTab !== "inquiries" && (
-              <button
-                onClick={handleSaveContent}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition"
-              >
-                <Save className="w-4 h-4" /> Save Changes
-              </button>
-            )}
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-navy-900 text-white p-6 rounded-3xl shadow-md">
+        <div>
+          <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-400">
+            CMS &amp; Lead Portal
+          </span>
+          <h1 className="text-2xl font-black">Sarkar Capital Admin Studio</h1>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setActiveTab("content")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
+              activeTab === "content"
+                ? "bg-emerald-500 text-navy-950"
+                : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+            }`}
+          >
+            <FileText className="w-4 h-4" /> Website Copy &amp; Photos
+          </button>
+          <button
+            onClick={() => setActiveTab("leads")}
+            className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition ${
+              activeTab === "leads"
+                ? "bg-emerald-500 text-navy-950"
+                : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+            }`}
+          >
+            <Users className="w-4 h-4" /> Consultation Leads ({leads.length})
+          </button>
+          <button
+            onClick={handleLogout}
+            className="px-3.5 py-2 rounded-xl bg-rose-600/20 text-rose-300 hover:bg-rose-600/30 text-xs font-bold flex items-center gap-1"
+          >
+            <LogOut className="w-3.5 h-3.5" /> Sign Out
+          </button>
+        </div>
+      </div>
+
+      {activeTab === "content" ? (
+        <div className="space-y-8">
+          <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 p-4 rounded-2xl">
+            <div className="text-xs font-bold text-emerald-950 flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              {saveMessage || "Upload leadership photos or edit text below, then click Publish Changes."}
+            </div>
             <button
-              onClick={handleLogout}
-              className="p-2 text-slate-500 hover:text-red-600 rounded-lg border border-slate-200 hover:bg-slate-100 transition"
-              title="Sign Out"
+              onClick={handleSaveAll}
+              disabled={saving}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-5 py-2.5 rounded-xl shadow-xs transition inline-flex items-center gap-1.5"
             >
-              <LogOut className="w-5 h-5" />
+              <Save className="w-4 h-4" />
+              {saving ? "Publishing..." : "Publish All Changes"}
             </button>
           </div>
-        </div>
 
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-          {[
-            { id: "homepage", label: "Homepage Copy" },
-            { id: "about", label: "About & Founder Photo" },
-            { id: "logos", label: "Partner Logos Manager" },
-            { id: "inquiries", label: `Leads Inbox (${inquiries.filter((i) => i.status === "pending").length})` },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as TabType)}
-              className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition ${
-                activeTab === tab.id
-                  ? "bg-navy-900 text-white shadow-xs"
-                  : "bg-white text-slate-700 border border-slate-200 hover:bg-slate-100"
-              }`}
+          {sections.map((sec) => (
+            <div
+              key={sec}
+              className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-5"
             >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+              <h2 className="text-lg font-black text-navy-900 border-b border-slate-100 pb-3">
+                {sec}
+              </h2>
 
-        {activeTab === "homepage" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-4 shadow-xs">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">Homepage Content</h2>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Headline (H1)</label>
-              <input
-                type="text"
-                value={content.hero_title || ""}
-                onChange={(e) => setContent({ ...content, hero_title: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">Subtitle</label>
-              <textarea
-                rows={3}
-                value={content.hero_subtitle || ""}
-                onChange={(e) => setContent({ ...content, hero_subtitle: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-          </div>
-        )}
-
-        {activeTab === "about" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6 shadow-xs">
-            <h2 className="text-lg font-bold text-slate-900 border-b pb-3">About Us &amp; Abhijit Sarkar Photo Uploader</h2>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-6 items-center bg-slate-50 p-6 rounded-2xl border border-slate-200">
-              <div className="sm:col-span-4 flex flex-col items-center">
-                {content.abhijit_photo_url ? (
-                  <img
-                    src={content.abhijit_photo_url}
-                    alt="Abhijit Sarkar"
-                    className="w-32 h-32 rounded-full object-cover border-2 border-emerald-500 shadow-md mb-3"
-                  />
-                ) : (
-                  <div className="w-32 h-32 rounded-full bg-slate-900 text-emerald-400 flex items-center justify-center font-bold mb-3">
-                    <User className="w-12 h-12" />
-                  </div>
-                )}
-                <span className="text-[11px] text-slate-500">Current Founder Photo</span>
-              </div>
-
-              <div className="sm:col-span-8 space-y-3">
-                <label className="block text-xs font-bold text-slate-900 uppercase">Upload Abhijit Sarkar Photo</label>
-                <p className="text-xs text-slate-500">Select a high-resolution professional portrait image (JPG, PNG) from your device.</p>
-                <label className="inline-flex items-center gap-2 bg-navy-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer shadow-xs transition">
-                  <Upload className="w-4 h-4" />
-                  {uploading === "abhijit_photo_url" ? "Uploading..." : "Choose Image File"}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleImageUpload(e, "abhijit_photo_url")}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">About Us Title</label>
-              <input
-                type="text"
-                value={content.about_hero_title || ""}
-                onChange={(e) => setContent({ ...content, about_hero_title: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase mb-1">About Us Subtitle</label>
-              <textarea
-                rows={3}
-                value={content.about_hero_subtitle || ""}
-                onChange={(e) => setContent({ ...content, about_hero_subtitle: e.target.value })}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
-              />
-            </div>
-          </div>
-        )}
-
-        {activeTab === "logos" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 space-y-6 shadow-xs">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">Partner &amp; AMC Logo Manager</h2>
-              <p className="text-xs text-slate-600 mt-1">
-                Upload transparent PNG or JPEG logos for each institutional partner and AMC.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-              {logoKeys.map((item) => {
-                const logoUrl = content[item.key];
-                return (
-                  <div key={item.key} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col items-center text-center space-y-3">
-                    <div className="h-14 w-28 bg-white rounded-xl border border-slate-200 flex items-center justify-center p-2 overflow-hidden shadow-2xs">
-                      {logoUrl ? (
-                        <img src={logoUrl} alt={item.name} className="max-h-full max-w-full object-contain" />
-                      ) : (
-                        <span className="text-[10px] font-bold text-slate-400">Default Logo</span>
-                      )}
-                    </div>
-                    <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">{item.role}</span>
-                      <h4 className="text-xs font-black text-slate-900">{item.name}</h4>
-                    </div>
-                    <label className="w-full inline-flex items-center justify-center gap-1.5 bg-navy-900 hover:bg-slate-800 text-white px-3 py-2 rounded-xl text-[11px] font-semibold cursor-pointer transition">
-                      <Upload className="w-3.5 h-3.5" />
-                      {uploading === item.key ? "Uploading..." : "Upload Logo"}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageUpload(e, item.key)}
-                        className="hidden"
-                      />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {CONTENT_FIELDS.filter((f) => f.section === sec).map((field) => (
+                  <div
+                    key={field.key}
+                    className={field.type === "textarea" ? "md:col-span-2 space-y-1.5" : "space-y-2"}
+                  >
+                    <label className="text-xs font-extrabold text-slate-700 block">
+                      {field.label}
                     </label>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
-        {activeTab === "inquiries" && (
-          <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-xs">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg font-bold text-slate-900">Consultation Inquiries Inbox</h2>
-              <button
-                onClick={fetchInquiries}
-                className="flex items-center gap-1.5 text-xs text-slate-600 border border-slate-200 px-3 py-1.5 rounded-lg"
-              >
-                <RefreshCw className="w-3.5 h-3.5" /> Refresh
-              </button>
-            </div>
-
-            {inquiries.length === 0 ? (
-              <p className="text-sm text-slate-500 py-8 text-center">No inquiries received yet.</p>
-            ) : (
-              <div className="divide-y divide-slate-100">
-                {inquiries.map((inq) => (
-                  <div key={inq.id} className="py-4 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-3">
-                        <span className="font-bold text-slate-900 text-sm">{inq.full_name}</span>
-                        <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-semibold uppercase">
-                          {inq.status}
-                        </span>
+                    {field.type === "image" ? (
+                      <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                        <div className="w-20 h-20 rounded-full overflow-hidden bg-white border-2 border-emerald-500 shrink-0 flex items-center justify-center">
+                          {contentMap[field.key] ? (
+                            <img
+                              src={contentMap[field.key]}
+                              alt={field.label}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <ImageIcon className="w-7 h-7 text-slate-400" />
+                          )}
+                        </div>
+                        <div className="space-y-2 flex-1">
+                          <label className="inline-flex items-center gap-1.5 bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold px-4 py-2 rounded-xl cursor-pointer transition">
+                            <Upload className="w-3.5 h-3.5" />
+                            {uploadingKey === field.key ? "Uploading..." : "Choose Portrait Image"}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleImageUpload(field.key, file);
+                              }}
+                            />
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Or paste direct image URL..."
+                            value={contentMap[field.key] || ""}
+                            onChange={(e) =>
+                              setContentMap((prev) => ({ ...prev, [field.key]: e.target.value }))
+                            }
+                            className="w-full px-3 py-1.5 rounded-lg border border-slate-200 text-xs bg-white"
+                          />
+                        </div>
                       </div>
-                      <div className="flex gap-4 text-xs text-slate-600">
-                        <span>Phone: {inq.phone}</span>
-                        <span>Email: {inq.email}</span>
-                      </div>
-                      {inq.message && <p className="text-xs text-slate-600 italic">"{inq.message}"</p>}
-                    </div>
-                    {inq.status === "pending" && (
-                      <button
-                        onClick={() => updateInquiryStatus(inq.id, "contacted")}
-                        className="text-xs bg-slate-900 text-white px-3 py-1.5 rounded-md"
-                      >
-                        Mark Contacted
-                      </button>
+                    ) : field.type === "textarea" ? (
+                      <textarea
+                        rows={3}
+                        value={contentMap[field.key] || ""}
+                        onChange={(e) =>
+                          setContentMap((prev) => ({ ...prev, [field.key]: e.target.value }))
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm"
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        value={contentMap[field.key] || ""}
+                        onChange={(e) =>
+                          setContentMap((prev) => ({ ...prev, [field.key]: e.target.value }))
+                        }
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm font-bold text-navy-900"
+                      />
                     )}
                   </div>
                 ))}
               </div>
-            )}
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-xs space-y-4">
+          <h2 className="text-lg font-black text-navy-900">Client Consultation Requests</h2>
+          {leads.length === 0 ? (
+            <p className="text-xs text-slate-500 py-8 text-center">No leads submitted yet.</p>
+          ) : (
+            <div className="space-y-3">
+              {leads.map((lead) => (
+                <div
+                  key={lead.id}
+                  className="p-4 rounded-2xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                >
+                  <div className="space-y-1">
+                    <div className="text-sm font-black text-navy-900">
+                      {lead.full_name}{" "}
+                      <span className="text-xs font-semibold text-emerald-700">
+                        ({lead.phone})
+                      </span>
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {lead.email} • Goal/Horizon: {lead.investment_horizon || "General"}
+                    </div>
+                    {lead.message && (
+                      <p className="text-xs text-slate-700 bg-slate-50 p-2 rounded-lg mt-1">
+                        {lead.message}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={lead.status || "New"}
+                      onChange={(e) => updateLeadStatus(lead.id, e.target.value)}
+                      className="text-xs font-bold border border-slate-300 rounded-xl px-3 py-2"
+                    >
+                      <option value="New">New</option>
+                      <option value="Contacted">Contacted</option>
+                      <option value="Onboarded">Onboarded</option>
+                    </select>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
