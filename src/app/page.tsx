@@ -266,7 +266,8 @@ export default async function Home() {
           </div>
         </div>
       </section>
-
+      {/* 4. 23-PARTNER ECOSYSTEM RAIL */}
+      <PartnerRail />
       {/* 2. SECOND FOLD: SIP COMPOUNDING CALCULATOR */}
       <section className="py-16 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -441,8 +442,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 4. 23-PARTNER ECOSYSTEM RAIL */}
-      <PartnerRail />
     </div>
   );
 }
