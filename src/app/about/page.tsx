@@ -1,7 +1,14 @@
 import Link from "next/link";
 import PartnerRail from "@/components/PartnerRail";
 import { supabase } from "@/lib/supabase";
-import { ShieldCheck, Award, TrendingUp, Building2, HeartHandshake, ArrowRight } from "lucide-react";
+import {
+  ShieldCheck,
+  Award,
+  TrendingUp,
+  Building2,
+  HeartHandshake,
+  ArrowRight,
+} from "lucide-react";
 
 export const revalidate = 0;
 
@@ -22,13 +29,14 @@ async function getSiteContent() {
 
 export default async function AboutPage() {
   const c = await getSiteContent();
-  const founderPhoto = c.founder_photo_url || "";
+  const abhijitPhoto = c.founder_photo_url || c.abhijit_photo_url || "";
+  const sampaPhoto = c.cofounder_photo_url || c.sampa_photo_url || "";
 
   const stats = [
-    { value: "₹10 Cr+", label: "Managed AUM", icon: TrendingUp },
-    { value: "25+ Yrs", label: "Years in Business", icon: Award },
-    { value: "40+", label: "AMCs Empaneled", icon: Building2 },
-    { value: "2,500+", label: "Lives Protected", icon: HeartHandshake },
+    { value: c.stat_aum_val || "₹10 Cr+", label: "Managed AUM", icon: TrendingUp },
+    { value: c.stat_years_val || "25+ Yrs", label: "Years in Business", icon: Award },
+    { value: c.stat_partners_val || "40+", label: "AMCs Empaneled", icon: Building2 },
+    { value: c.stat_lives_val || "2,500+", label: "Lives Protected", icon: HeartHandshake },
   ];
 
   return (
@@ -41,10 +49,11 @@ export default async function AboutPage() {
               <ShieldCheck className="w-4 h-4" /> Mumbai • Kolkata • Pan-India
             </div>
             <h1 className="text-3xl sm:text-5xl font-black text-navy-900 tracking-tight">
-              25+ Years of Trusted Family Wealth &amp; Protection Guidance
+              {c.about_hero_title || "25+ Years of Trusted Family Wealth & Protection Guidance"}
             </h1>
             <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-              Sarkar Capital is a unified multi-product financial distribution partner built on clarity, long-term relationship trust, and 100% direct-to-institution safety.
+              {c.about_hero_subtitle ||
+                "Sarkar Capital is a unified multi-product financial distribution partner built on clarity, long-term relationship trust, and 100% direct-to-institution safety."}
             </p>
           </div>
 
@@ -68,13 +77,13 @@ export default async function AboutPage() {
             })}
           </div>
 
-          {/* Founder Profile Card: Abhijit Sarkar */}
+          {/* Leadership Card 1: Abhijit Sarkar */}
           <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
             <div className="md:col-span-4 flex flex-col items-center text-center">
               <div className="w-44 h-44 sm:w-52 sm:h-52 rounded-full border-4 border-emerald-600 overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
-                {founderPhoto ? (
+                {abhijitPhoto ? (
                   <img
-                    src={founderPhoto}
+                    src={abhijitPhoto}
                     alt="Abhijit Sarkar - Founder & Chief Wealth Planner"
                     className="w-full h-full object-cover"
                   />
@@ -122,6 +131,60 @@ export default async function AboutPage() {
                   className="bg-slate-100 hover:bg-slate-200 text-navy-900 text-xs font-bold px-5 py-3 rounded-xl transition"
                 >
                   Explore All 12 Products
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* Leadership Card 2: Sampa Sarkar (Director & Co-Founder) */}
+          <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+            <div className="md:col-span-4 flex flex-col items-center text-center">
+              <div className="w-44 h-44 sm:w-52 sm:h-52 rounded-full border-4 border-emerald-600 overflow-hidden bg-slate-100 shadow-lg flex items-center justify-center">
+                {sampaPhoto ? (
+                  <img
+                    src={sampaPhoto}
+                    alt="Sampa Sarkar - Director & Co-Founder"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="text-center p-4">
+                    <span className="text-4xl font-black text-navy-900 block">SS</span>
+                    <span className="text-[11px] font-bold text-slate-500 mt-1 block">
+                      Sampa Sarkar
+                    </span>
+                  </div>
+                )}
+              </div>
+              <h2 className="text-xl font-black text-navy-900 mt-4">Sampa Sarkar</h2>
+              <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mt-0.5">
+                Director &amp; Co-Founder
+              </p>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Client Operations, Service Governance &amp; Family Protection Desk
+              </p>
+            </div>
+
+            <div className="md:col-span-8 space-y-4">
+              <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                Governance &amp; Client Care
+              </span>
+              <h3 className="text-2xl sm:text-3xl font-black text-navy-900">
+                Seamless Onboarding, Documentation &amp; Family Servicing
+              </h3>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                {c.sampa_bio_p1 ||
+                  "As Director and Co-Founder of Sarkar Capital, Sampa Sarkar oversees client onboarding, KYC compliance, and ongoing service support across Mutual Funds, Corporate FDs, Bonds, and Life & Health Insurance."}
+              </p>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                {c.sampa_bio_p2 ||
+                  "She ensures that senior citizens, retirees, and family members experience smooth paperless execution, timely portfolio statements, nomination updates, and dedicated claim and maturity assistance whenever required."}
+              </p>
+              <div className="pt-2 flex flex-wrap gap-3">
+                <Link
+                  href="/contact"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold px-5 py-3 rounded-xl transition inline-flex items-center gap-1.5"
+                >
+                  Connect With Our Relationship Desk <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </div>
